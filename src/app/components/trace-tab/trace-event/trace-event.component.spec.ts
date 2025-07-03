@@ -24,9 +24,8 @@ describe('TraceEventComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TraceEventComponent]
-    })
-    .compileComponents();
+      imports: [TraceEventComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TraceEventComponent);
     component = fixture.componentInstance;

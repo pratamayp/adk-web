@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Environment} from './environment';
+import { Environment } from './environment';
 
 export const env: Environment = {
   apiServerPort: '8000',

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {ArtifactTabComponent} from './artifact-tab.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ArtifactTabComponent } from './artifact-tab.component';
 describe('ArtifactTabComponent', () => {
   let component: ArtifactTabComponent;
 

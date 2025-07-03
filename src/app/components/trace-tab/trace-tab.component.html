@@ -17,11 +17,14 @@
 <div style="padding-left: 25px; padding-right: 25px">
   <h2 mat-dialog-title class="trace-title">Invocations</h2>
   <div class="trace-list-wrapper">
-    @for (invoc of invocTraces | keyvalue: mapOrderPreservingSort; track invoc; let i = $index) {
+    @for (invoc of invocTraces | keyvalue: mapOrderPreservingSort; track invoc;
+    let i = $index) {
     <div class="trace-item">
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title> {{invocToUserMsg.get(invoc.key)}} </mat-panel-title>
+          <mat-panel-title>
+            {{ invocToUserMsg.get(invoc.key) }}
+          </mat-panel-title>
         </mat-expansion-panel-header>
         <app-trace-tree
           [spans]="invoc.value"

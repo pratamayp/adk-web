@@ -25,9 +25,8 @@ describe('TraceChartComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TraceChartComponent]
-    })
-    .compileComponents();
+      imports: [TraceChartComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TraceChartComponent);
     component = fixture.componentInstance;

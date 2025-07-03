@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-import {URLUtil} from '../../../utils/url-util';
+import { URLUtil } from '../../../utils/url-util';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,7 @@ export class SessionService {
   createSession(userId: string, appName: string) {
     if (this.apiServerDomain != undefined) {
       const url =
-          this.apiServerDomain + `/apps/${appName}/users/${userId}/sessions`;
+        this.apiServerDomain + `/apps/${appName}/users/${userId}/sessions`;
       return this.http.post<any>(url, null);
     }
     return new Observable<any>();
@@ -40,7 +40,7 @@ export class SessionService {
   listSessions(userId: string, appName: string) {
     if (this.apiServerDomain != undefined) {
       const url =
-          this.apiServerDomain + `/apps/${appName}/users/${userId}/sessions`;
+        this.apiServerDomain + `/apps/${appName}/users/${userId}/sessions`;
 
       return this.http.get<any>(url);
     }
@@ -48,23 +48,25 @@ export class SessionService {
   }
 
   deleteSession(userId: string, appName: string, sessionId: string) {
-    const url = this.apiServerDomain +
-        `/apps/${appName}/users/${userId}/sessions/${sessionId}`;
+    const url =
+      this.apiServerDomain +
+      `/apps/${appName}/users/${userId}/sessions/${sessionId}`;
 
     return this.http.delete<any>(url);
   }
 
   getSession(userId: string, appName: string, sessionId: string) {
-    const url = this.apiServerDomain +
-        `/apps/${appName}/users/${userId}/sessions/${sessionId}`;
+    const url =
+      this.apiServerDomain +
+      `/apps/${appName}/users/${userId}/sessions/${sessionId}`;
 
     return this.http.get<any>(url);
   }
 
   importSession(userId: string, appName: string, events: any[]) {
     if (this.apiServerDomain != undefined) {
-      const url = this.apiServerDomain +
-          `/apps/${appName}/users/${userId}/sessions`;
+      const url =
+        this.apiServerDomain + `/apps/${appName}/users/${userId}/sessions`;
 
       return this.http.post<any>(url, {
         appName: appName,

@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {v4 as uuidv4} from 'uuid';
-import {EvalService} from '../../../../core/services/eval.service';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { v4 as uuidv4 } from 'uuid';
+import { EvalService } from '../../../../core/services/eval.service';
 
 @Component({
   selector: 'app-add-eval-session-dialog',
@@ -38,7 +38,7 @@ export class AddEvalSessionDialogComponent {
       sessionId: string;
       evalSetId: string;
     },
-    public dialogRef: MatDialogRef<AddEvalSessionDialogComponent>,
+    public dialogRef: MatDialogRef<AddEvalSessionDialogComponent>
   ) {}
 
   createNewEvalCase() {
@@ -46,16 +46,16 @@ export class AddEvalSessionDialogComponent {
       alert('Cannot create eval set with empty id!');
     } else {
       this.evalService
-          .addCurrentSession(
-              this.data.appName,
-              this.data.evalSetId,
-              this.newCaseId,
-              this.data.sessionId,
-              this.data.userId,
-              )
-          .subscribe((res) => {
-            this.dialogRef.close(true);
-          });
+        .addCurrentSession(
+          this.data.appName,
+          this.data.evalSetId,
+          this.newCaseId,
+          this.data.sessionId,
+          this.data.userId
+        )
+        .subscribe((res) => {
+          this.dialogRef.close(true);
+        });
     }
   }
 }

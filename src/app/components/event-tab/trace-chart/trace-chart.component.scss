@@ -58,15 +58,18 @@
 
 .trace-row {
   display: flex;
-  align-items: stretch; /* <-- stretch ensures full height */
+  align-items: stretch;
+  /* <-- stretch ensures full height */
   position: relative;
-  height: 32px; /* Give rows a little more vertical space */
+  height: 32px;
+  /* Give rows a little more vertical space */
 }
 
 .trace-indent {
   display: flex;
   flex-shrink: 0;
-  height: 100%; /* Make sure it stretches */
+  height: 100%;
+  /* Make sure it stretches */
 }
 
 .indent-connector {

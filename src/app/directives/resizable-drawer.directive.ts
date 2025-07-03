@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
-import {AfterViewInit, Directive, ElementRef, HostListener, Renderer2} from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+  Renderer2,
+} from '@angular/core';
 
 interface ResizingEvent {
   isResizing: boolean;
@@ -30,7 +36,7 @@ interface ResizingEvent {
 export class ResizableDrawerDirective implements AfterViewInit {
   private readonly sideDrawerMinWidth = 310;
   private sideDrawerMaxWidth;
-  private resizeHandle: HTMLElement|null = null;
+  private resizeHandle: HTMLElement | null = null;
 
   private resizingEvent: ResizingEvent = {
     isResizing: false,
@@ -43,15 +49,19 @@ export class ResizableDrawerDirective implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.resizeHandle =
-        document.getElementsByClassName('resize-handler')[0] as HTMLElement;
-    this.renderer.listen(
-        this.resizeHandle, 'mousedown',
-        (event) => this.onResizeHandleMouseDown(event));
+    this.resizeHandle = document.getElementsByClassName(
+      'resize-handler'
+    )[0] as HTMLElement;
+    this.renderer.listen(this.resizeHandle, 'mousedown', (event) =>
+      this.onResizeHandleMouseDown(event)
+    );
     document.documentElement.style.setProperty('--side-drawer-width', '570px');
 
     this.renderer.setStyle(
-        this.el.nativeElement, 'width', 'var(--side-drawer-width)');
+      this.el.nativeElement,
+      'width',
+      'var(--side-drawer-width)'
+    );
   }
 
   private onResizeHandleMouseDown(event: MouseEvent): void {
@@ -89,13 +99,16 @@ export class ResizableDrawerDirective implements AfterViewInit {
 
   private set sideDrawerWidth(width: number) {
     const clampedWidth = Math.min(
-        Math.max(width, this.sideDrawerMinWidth), this.sideDrawerMaxWidth);
+      Math.max(width, this.sideDrawerMinWidth),
+      this.sideDrawerMaxWidth
+    );
     document.body.style.setProperty('--side-drawer-width', `${clampedWidth}px`);
   }
 
   private get sideDrawerWidth(): number {
-    const widthString =
-        getComputedStyle(document.body).getPropertyValue('--side-drawer-width');
+    const widthString = getComputedStyle(document.body).getPropertyValue(
+      '--side-drawer-width'
+    );
     const parsedWidth = parseInt(widthString, 10);
 
     return isNaN(parsedWidth) ? 500 : parsedWidth;

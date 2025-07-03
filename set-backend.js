@@ -20,13 +20,13 @@ const path = './src/assets/config/runtime-config.json';
 const backendUrl = process.env.npm_config_backend;
 
 if (!backendUrl) {
-    console.error('Missing --backend argument');
-    console.error('Usage: npm run serve --backend=http://localhost:8000');
-    process.exit(1);
+  console.error('Missing --backend argument');
+  console.error('Usage: npm run serve --backend=http://localhost:8000');
+  process.exit(1);
 }
 
 const config = {
-    backendUrl
+  backendUrl
 };
 
 fs.writeFileSync(path, JSON.stringify(config, null, 2));

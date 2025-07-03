@@ -15,8 +15,8 @@
  */
 
 // dialog.component.spec.ts
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatButtonModule} from '@angular/material/button';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -28,7 +28,7 @@ import {
 import {
   DeleteSessionDialogComponent,
   DeleteSessionDialogData,
-} from './dialog.component';
+} from './delete-session-dialog.component';
 
 describe('DeleteSessionDialogComponent', () => {
   let component: DeleteSessionDialogComponent;
@@ -53,8 +53,8 @@ describe('DeleteSessionDialogComponent', () => {
       ],
       imports: [MatDialogModule, MatButtonModule],
       providers: [
-        {provide: MatDialogRef, useValue: mockDialogRef},
-        {provide: MAT_DIALOG_DATA, useValue: mockDialogData},
+        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: MAT_DIALOG_DATA, useValue: mockDialogData },
       ],
     }).compileComponents();
   });

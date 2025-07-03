@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {NewEvalSetDialogComponentComponent} from './new-eval-set-dialog-component.component';
+import { NewEvalSetDialogComponentComponent } from './new-eval-set-dialog-component.component';
 
 describe('NewEvalSetDialogComponentComponent', () => {
   let component: NewEvalSetDialogComponentComponent;

@@ -1,4 +1,3 @@
-
 # Agent Development Kit Web UI (ADK WEB)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -22,7 +21,6 @@ Agent Development Kit (ADK) is a flexible and modular framework for developing a
 
 Adk web is the built-in dev UI that comes along with adk for easier development and debug.
 
-
 ## ✨ Prerequisite
 
 - **Install [Angular CLI](https://angular.dev/tools/cli)**
@@ -31,10 +29,9 @@ Adk web is the built-in dev UI that comes along with adk for easier development 
 
 - **Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)**
 
-- **Install [google-adk (Python)](https://github.com/google/adk-python)** 
+- **Install [google-adk (Python)](https://github.com/google/adk-python)**
 
-- **Install [google-adk (Java)](https://github.com/google/adk-java/)** 
-
+- **Install [google-adk (Java)](https://github.com/google/adk-java/)**
 
 ## 🚀 Running adk web
 
@@ -66,10 +63,10 @@ If you see `adk command not found`, then be sure to install `google-adk` (or rem
 
 Go to `localhost:4200` and start developing!
 
-
 ## 🤝 Contributing
 
-We welcome contributions from the community! Whether it's bug reports, feature requests, documentation improvements, or code contributions, please see our 
+We welcome contributions from the community! Whether it's bug reports, feature requests, documentation improvements, or code contributions, please see our
+
 - [General contribution guideline and flow](https://google.github.io/adk-docs/contributing-guide/#questions).
 - Then if you want to contribute code, please read [Code Contributing Guidelines](./CONTRIBUTING.md) to get started.
 
@@ -83,4 +80,4 @@ This feature is subject to the "Pre-GA Offerings Terms" in the General Service T
 
 ---
 
-*Happy Agent Building!*
+_Happy Agent Building!_

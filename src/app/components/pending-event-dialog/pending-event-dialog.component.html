@@ -19,8 +19,12 @@
 } @if (selectedEvent) {
 <h2 mat-dialog-title>Send Response To Pending Event</h2>
 }
-<h2 mat-dialog-title *ngIf="!selectedEvent" class="dialog-title">Events List</h2>
-<h2 mat-dialog-title *ngIf="selectedEvent" class="dialog-title">Send Response To Pending Event</h2>
+<h2 mat-dialog-title *ngIf="!selectedEvent" class="dialog-title">
+  Events List
+</h2>
+<h2 mat-dialog-title *ngIf="selectedEvent" class="dialog-title">
+  Send Response To Pending Event
+</h2>
 <mat-dialog-content>
   @if (selectedEvent) {
   <div>
@@ -39,7 +43,7 @@
 <mat-dialog-actions>
   @if (selectedEvent && selectedEvent.response) {
   <button mat-button (click)="sendResponse()" [disabled]="sending">
-    {{ sending? "Sending...": "Send" }}
+    {{ sending ? 'Sending...' : 'Send' }}
   </button>
   }
   <button mat-button mat-dialog-close>Close</button>

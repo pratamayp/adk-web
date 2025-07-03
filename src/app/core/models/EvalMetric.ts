@@ -33,5 +33,5 @@ export const DEFAULT_EVAL_METRICS: EvalMetric[] = [
   {
     metricName: 'response_match_score',
     threshold: 0.7,
-  }
+  },
 ];

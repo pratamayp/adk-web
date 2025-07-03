@@ -29,7 +29,7 @@ export interface SpanNode extends Span {
   children: SpanNode[];
   depth: number;
   duration: number;
-  id: string;  // Using span_id as string ID
+  id: string; // Using span_id as string ID
 }
 
 export interface TimeTick {

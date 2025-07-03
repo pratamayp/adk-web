@@ -20,19 +20,17 @@
 
 html {
   color-scheme: dark;
-  @include mat.theme((
-    color: theme.$primary-palette,
-    density: 0
-  ));
+  @include mat.theme((color: theme.$primary-palette,
+      density: 0));
 }
 
 html {
   font-family: 'Google Sans', 'Helvetica Neue', sans-serif !important;
-} 
+}
 
 body {
-    height: 100vh;
-    margin: 0;
+  height: 100vh;
+  margin: 0;
 }
 
 markdown p {
@@ -53,15 +51,12 @@ markdown p {
 }
 
 :root {
-  @include mat.dialog-overrides((
-    container-color: #2b2b2f,
-    subhead-color: white,
-  ));
+  @include mat.dialog-overrides((container-color: #2b2b2f,
+      subhead-color: white,
+    ));
 }
 
 :root {
-  @include mat.progress-spinner-overrides((
-    active-indicator-color: #a8c7fa,
-    size: 80
-  ));
+  @include mat.progress-spinner-overrides((active-indicator-color: #a8c7fa,
+      size: 80));
 }

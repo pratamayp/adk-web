@@ -84,15 +84,13 @@
 .selected-eval-case {
   font-weight: 900;
   color: #8ab4f8;
- }
+}
 
 .save-session-btn {
   width: 100%;
-  background: linear-gradient(
-      0deg,
+  background: linear-gradient(0deg,
       rgba(138, 180, 248, 0.24) 0%,
-      rgba(138, 180, 248, 0.24) 100%
-    ),
+      rgba(138, 180, 248, 0.24) 100%),
     #202124;
   border: none;
   border-radius: 4px;
@@ -250,6 +248,7 @@
       color: #bdbdbd;
       font-size: 1.2em;
       cursor: pointer;
+
       &:hover {
         opacity: 0.8;
       }

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {URLUtil} from '../../../utils/url-util';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { URLUtil } from '../../../utils/url-util';
 
 @Injectable({
   providedIn: 'root',
@@ -40,11 +40,11 @@ export class EventService {
     userId: string,
     appName: string,
     sessionId: string,
-    eventId: string,
+    eventId: string
   ) {
     const url =
       this.apiServerDomain +
       `/apps/${appName}/users/${userId}/sessions/${sessionId}/events/${eventId}/graph`;
-    return this.http.get<{dotSrc?: string}>(url);
+    return this.http.get<{ dotSrc?: string }>(url);
   }
 }

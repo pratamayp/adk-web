@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {Component, Inject} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import {EvalMetric} from '../../../core/models/EvalMetric';
+import { EvalMetric } from '../../../core/models/EvalMetric';
 
 /**
  * @interface EvalConfigData
@@ -52,35 +52,37 @@ export class RunEvalConfigDialogComponent {
    *     values).
    */
   constructor(
-      public dialogRef: MatDialogRef<RunEvalConfigDialogComponent>,
-      private fb: FormBuilder,
-      @Inject(MAT_DIALOG_DATA) public data: EvalConfigData) {
+    public dialogRef: MatDialogRef<RunEvalConfigDialogComponent>,
+    private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: EvalConfigData
+  ) {
     this.evalMetrics = this.data.evalMetrics;
 
     // Initialize the form with controls and validators
     this.evalForm = this.fb.group({
       tool_trajectory_avg_score_threshold: [
         this.getEvalMetricThresholdFromData('tool_trajectory_avg_score'),
-        [Validators.required, Validators.min(0), Validators.max(1)]
+        [Validators.required, Validators.min(0), Validators.max(1)],
       ],
       response_match_score_threshold: [
         this.getEvalMetricThresholdFromData('response_match_score'),
-        [Validators.required, Validators.min(0), Validators.max(1)]
-      ]
+        [Validators.required, Validators.min(0), Validators.max(1)],
+      ],
     });
   }
 
   private getEvalMetricThresholdFromData(metricName: string): number {
-    return this.evalMetrics.find((metric) => metric.metricName === metricName)
-               ?.threshold ??
-        0;
+    return (
+      this.evalMetrics.find((metric) => metric.metricName === metricName)
+        ?.threshold ?? 0
+    );
   }
 
   onStart(): void {
     if (this.evalForm.valid) {
       const {
         tool_trajectory_avg_score_threshold,
-        response_match_score_threshold
+        response_match_score_threshold,
       } = this.evalForm.value;
 
       for (const metric of this.evalMetrics) {
@@ -96,7 +98,6 @@ export class RunEvalConfigDialogComponent {
   }
 
   onCancel(): void {
-    this.dialogRef.close(
-        null);  // Return null or undefined to indicate cancellation
+    this.dialogRef.close(null); // Return null or undefined to indicate cancellation
   }
 }

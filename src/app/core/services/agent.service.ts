@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
-import {URLUtil} from '../../../utils/url-util';
-import {AgentRunRequest} from '../models/AgentRunRequest';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { URLUtil } from '../../../utils/url-util';
+import { AgentRunRequest } from '../models/AgentRunRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -30,10 +30,7 @@ export class AgentService {
   currentApp = this._currentApp.asObservable();
   private isLoading = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private http: HttpClient,
-    private zone: NgZone,
-  ) {}
+  constructor(private http: HttpClient, private zone: NgZone) {}
 
   getApp(): Observable<string> {
     return this.currentApp;
@@ -56,7 +53,7 @@ export class AgentService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'text/event-stream',
+          Accept: 'text/event-stream',
         },
         body: JSON.stringify(req),
       })
@@ -66,36 +63,38 @@ export class AgentService {
           let lastData = '';
 
           const read = () => {
-            reader?.read()
-                .then(({done, value}) => {
-                  this.isLoading.next(true);
-                  if (done) {
-                    this.isLoading.next(false);
-                    return observer.complete();
+            reader
+              ?.read()
+              .then(({ done, value }) => {
+                this.isLoading.next(true);
+                if (done) {
+                  this.isLoading.next(false);
+                  return observer.complete();
+                }
+                const chunk = decoder.decode(value, { stream: true });
+                lastData += chunk;
+                try {
+                  const lines = lastData
+                    .split(/\r?\n/)
+                    .filter((line) => line.startsWith('data:'));
+                  lines.forEach((line) => {
+                    const data = line.replace(/^data:\s*/, '');
+                    JSON.parse(data);
+                    self.zone.run(() => observer.next(data));
+                  });
+                  lastData = '';
+                } catch (e) {
+                  // the data is not a valid json, it could be an incomplete
+                  // chunk. we ignore it and wait for the next chunk.
+                  if (e instanceof SyntaxError) {
+                    read();
                   }
-                  const chunk = decoder.decode(value, {stream: true});
-                  lastData += chunk;
-                  try {
-                    const lines = lastData.split(/\r?\n/).filter(
-                        (line) => line.startsWith('data:'));
-                    lines.forEach((line) => {
-                      const data = line.replace(/^data:\s*/, '');
-                      JSON.parse(data);
-                      self.zone.run(() => observer.next(data));
-                    });
-                    lastData = '';
-                  } catch (e) {
-                    // the data is not a valid json, it could be an incomplete
-                    // chunk. we ignore it and wait for the next chunk.
-                    if (e instanceof SyntaxError) {
-                      read();
-                    }
-                  }
-                  read();  // Read the next chunk
-                })
-                .catch((err) => {
-                  self.zone.run(() => observer.error(err));
-                });
+                }
+                read(); // Read the next chunk
+              })
+              .catch((err) => {
+                self.zone.run(() => observer.error(err));
+              });
           };
 
           read();

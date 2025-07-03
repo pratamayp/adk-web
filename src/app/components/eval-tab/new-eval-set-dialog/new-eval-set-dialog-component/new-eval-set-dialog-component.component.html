@@ -15,13 +15,13 @@
 -->
 
 <h2 mat-dialog-title>Create New Eval Set</h2>
-<mat-dialog-content>
-  Please enter the eval set name
-</mat-dialog-content>
-<mat-form-field style="padding-left:20px; padding-right: 24px;">
-    <input [(ngModel)]="newSetId" matInput (keydown.enter)="createNewEvalSet()">
-  </mat-form-field>
+<mat-dialog-content> Please enter the eval set name </mat-dialog-content>
+<mat-form-field style="padding-left: 20px; padding-right: 24px">
+  <input [(ngModel)]="newSetId" matInput (keydown.enter)="createNewEvalSet()" />
+</mat-form-field>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button cdkFocusInitial (click)="createNewEvalSet()">Create</button>
+  <button mat-button cdkFocusInitial (click)="createNewEvalSet()">
+    Create
+  </button>
 </mat-dialog-actions>

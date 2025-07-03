@@ -15,8 +15,9 @@
 -->
 
 <div style="margin-top: 15px">
-  <div class="invocation-id-container">Invocation ID: 
-    <div class="invocation-id">{{invocationId}}</div>
+  <div class="invocation-id-container">
+    Invocation ID:
+    <div class="invocation-id">{{ invocationId }}</div>
   </div>
   <div class="trace-container">
     @for (node of flatTree; track node) {
@@ -36,14 +37,14 @@
         <span
           class="material-symbols-outlined"
           style="margin-right: 8px"
-          [ngStyle]="{ color: isEventRow(node)? '#8AB4F8' : 'white' }"
+          [ngStyle]="{ color: isEventRow(node) ? '#8AB4F8' : 'white' }"
         >
           {{ getSpanIcon(node.span.name) }}
         </span>
         <div
           class="trace-label"
           [style.width.px]="400 - node.level * 20"
-          [ngStyle]="{ color: isEventRow(node)? '#8AB4F8' : 'white' }"
+          [ngStyle]="{ color: isEventRow(node) ? '#8AB4F8' : 'white' }"
         >
           {{ node.span.name }}
         </div>
@@ -54,13 +55,17 @@
           [style.left.%]="getRelativeStart(node.span)"
           [style.width.%]="getRelativeWidth(node.span)"
         >
-          {{ (toMs(node.span.end_time) - toMs(node.span.start_time)).toFixed(2) }}ms
+          {{
+            (toMs(node.span.end_time) - toMs(node.span.start_time)).toFixed(2)
+          }}ms
         </div>
         @if (getRelativeWidth(node.span) < 10) {
         <span
           style="position: absolute; color: #8dabbf"
           [style.left.%]="getRelativeStart(node.span) + 5"
-          >{{ (toMs(node.span.end_time) - toMs(node.span.start_time)).toFixed(2) }}ms</span
+          >{{
+            (toMs(node.span.end_time) - toMs(node.span.start_time)).toFixed(2)
+          }}ms</span
         >
         }
       </div>

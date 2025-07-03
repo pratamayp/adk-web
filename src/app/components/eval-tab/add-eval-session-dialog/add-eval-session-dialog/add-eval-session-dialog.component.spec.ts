@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {AddEvalSessionDialogComponent} from './add-eval-session-dialog.component';
+import { AddEvalSessionDialogComponent } from './add-eval-session-dialog.component';
 
 describe('AddEvalSessionDialogComponent', () => {
   let component: AddEvalSessionDialogComponent;

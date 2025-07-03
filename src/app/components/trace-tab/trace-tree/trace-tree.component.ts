@@ -14,33 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
-import {Span} from '../../../core/models/Trace';
-import {TraceService} from '../../../core/services/trace.service';
-
+import { Span } from '../../../core/models/Trace';
+import { TraceService } from '../../../core/services/trace.service';
 
 @Component({
   selector: 'app-trace-tree',
   templateUrl: './trace-tree.component.html',
   styleUrl: './trace-tree.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class TraceTreeComponent {
   @Input() spans: any[] = [];
   @Input() invocationId: string = '';
   tree: Span[] = [];
-  eventData: Map<string, any>|undefined;
+  eventData: Map<string, any> | undefined;
   baseStartTimeMs = 0;
   totalDurationMs = 1;
-  flatTree: {span: Span; level: number}[] = [];
+  flatTree: { span: Span; level: number }[] = [];
   traceLabelIconMap = new Map<string, string>([
     ['Invocation', 'start'],
     ['agent_run', 'directions_run'],
     ['tool', 'build'],
     ['call_llm', 'chat'],
   ]);
-  selectedRow: Span|undefined = undefined;
+  selectedRow: Span | undefined = undefined;
 
   constructor(private traceService: TraceService) {}
 
@@ -51,18 +50,18 @@ export class TraceTreeComponent {
     this.baseStartTimeMs = times.start;
     this.totalDurationMs = times.duration;
     this.traceService.selectedTraceRow$.subscribe(
-        span => this.selectedRow = span);
-    this.traceService.eventData$.subscribe(e => this.eventData = e);
+      (span) => (this.selectedRow = span)
+    );
+    this.traceService.eventData$.subscribe((e) => (this.eventData = e));
   }
 
-
   buildSpanTree(spans: Span[]): Span[] {
-    const spanClones = spans.map(span => ({...span}));
+    const spanClones = spans.map((span) => ({ ...span }));
     const spanMap = new Map<string, Span>();
     const roots: Span[] = [];
 
-    spanClones.forEach(span => spanMap.set(span.span_id, span));
-    spanClones.forEach(span => {
+    spanClones.forEach((span) => spanMap.set(span.span_id, span));
+    spanClones.forEach((span) => {
       if (span.parent_span_id && spanMap.has(span.parent_span_id)) {
         const parent = spanMap.get(span.parent_span_id)!;
         parent.children = parent.children || [];
@@ -76,9 +75,9 @@ export class TraceTreeComponent {
   }
 
   getGlobalTimes(spans: Span[]) {
-    const start = Math.min(...spans.map(s => this.toMs(s.start_time)));
-    const end = Math.max(...spans.map(s => this.toMs(s.end_time)));
-    return {start, duration: end - start};
+    const start = Math.min(...spans.map((s) => this.toMs(s.start_time)));
+    const end = Math.max(...spans.map((s) => this.toMs(s.end_time)));
+    return { start, duration: end - start };
   }
 
   toMs(nanos: number): number {
@@ -86,24 +85,27 @@ export class TraceTreeComponent {
   }
 
   getRelativeStart(span: Span): number {
-    return ((this.toMs(span.start_time) - this.baseStartTimeMs) /
-            this.totalDurationMs) *
-        100;
+    return (
+      ((this.toMs(span.start_time) - this.baseStartTimeMs) /
+        this.totalDurationMs) *
+      100
+    );
   }
 
   getRelativeWidth(span: Span): number {
-    return ((this.toMs(span.end_time) - this.toMs(span.start_time)) /
-            this.totalDurationMs) *
-        100;
+    return (
+      ((this.toMs(span.end_time) - this.toMs(span.start_time)) /
+        this.totalDurationMs) *
+      100
+    );
   }
 
   flattenTree(spans: Span[], level: number = 0): any[] {
-    const tree = spans.flatMap(
-        span =>
-            [{span, level},
-             ...(span.children ? this.flattenTree(span.children, level + 1) :
-                                 [])]);
-    return tree
+    const tree = spans.flatMap((span) => [
+      { span, level },
+      ...(span.children ? this.flattenTree(span.children, level + 1) : []),
+    ]);
+    return tree;
   }
 
   getSpanIcon(label: string) {
@@ -116,21 +118,21 @@ export class TraceTreeComponent {
   }
 
   getArray(n: number): number[] {
-    return Array.from({length: n});
+    return Array.from({ length: n });
   }
 
   selectRow(node: any) {
     if (this.selectedRow && this.selectedRow.span_id == node.span.span_id) {
       this.traceService.selectedRow(undefined);
-      this.traceService.setHoveredMessages(undefined, this.invocationId)
+      this.traceService.setHoveredMessages(undefined, this.invocationId);
       return;
     }
     this.traceService.selectedRow(node.span);
-    this.traceService.setHoveredMessages(node.span, this.invocationId)
+    this.traceService.setHoveredMessages(node.span, this.invocationId);
   }
 
   rowSelected(node: any) {
-    return this.selectedRow == node.span
+    return this.selectedRow == node.span;
   }
 
   isEventRow(node: any) {
@@ -145,7 +147,7 @@ export class TraceTreeComponent {
   }
 
   onHover(n: any) {
-    this.traceService.setHoveredMessages(n.span, this.invocationId)
+    this.traceService.setHoveredMessages(n.span, this.invocationId);
   }
 
   onHoverOut() {

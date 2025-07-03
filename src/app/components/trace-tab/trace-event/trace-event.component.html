@@ -33,7 +33,10 @@
     <mat-tab label="Graph">
       <div class="event-graph-container">
         @if (renderedEventGraph) {
-        <div [innerHtml]="renderedEventGraph" (click)="openViewImageDialog(rawSvgString)"></div>
+        <div
+          [innerHtml]="renderedEventGraph"
+          (click)="openViewImageDialog(rawSvgString)"
+        ></div>
         }
       </div>
     </mat-tab>

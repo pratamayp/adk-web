@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import {AppModule} from './app/app.module';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
 
 fetch('./assets/config/runtime-config.json')
   .then((response) => response.json())

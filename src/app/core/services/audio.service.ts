@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {Injectable} from '@angular/core';
-import {LiveRequest} from '../models/LiveRequest';
-import {WebSocketService} from './websocket.service';
+import { Injectable } from '@angular/core';
+import { LiveRequest } from '../models/LiveRequest';
+import { WebSocketService } from './websocket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -35,17 +35,17 @@ export class AudioService {
 
   async startRecording() {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({audio: true});
+      this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
       this.audioContext = new AudioContext();
       await this.audioContext.audioWorklet.addModule(
-          './assets/audio-processor.js',
+        './assets/audio-processor.js'
       );
 
       this.source = this.audioContext.createMediaStreamSource(this.stream);
       const workletNode = new AudioWorkletNode(
         this.audioContext,
-        'audio-processor',
+        'audio-processor'
       );
 
       workletNode.port.onmessage = (event) => {
@@ -67,7 +67,7 @@ export class AudioService {
     // Concatenate all accumulated chunks into one Uint8Array
     const totalLength = this.audioBuffer.reduce(
       (sum, chunk) => sum + chunk.length,
-      0,
+      0
     );
     const combinedBuffer = new Uint8Array(totalLength);
 

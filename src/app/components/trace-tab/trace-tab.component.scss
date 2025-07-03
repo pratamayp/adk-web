@@ -110,14 +110,11 @@
 
 .trace-item {
   margin-top: 5px;
-  @include mat.expansion-overrides(
-    (
-      container-background-color: #333537,
+  @include mat.expansion-overrides((container-background-color: #333537,
       header-focus-state-layer-color: red,
       header-description-color: #8e918f,
       header-text-size: 15,
-    )
-  );
+    ));
 }
 
 ::ng-deep .mat-expansion-panel-header.mat-expanded:focus {

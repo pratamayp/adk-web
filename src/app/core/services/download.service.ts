@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +39,7 @@ export class DownloadService {
   downloadObjectAsJson(data: object, filename = 'session.json'): void {
     const jsonString = JSON.stringify(data, null, 2);
 
-    const blob = new Blob([jsonString], {type: 'application/json'});
+    const blob = new Blob([jsonString], { type: 'application/json' });
 
     const url = URL.createObjectURL(blob);
 

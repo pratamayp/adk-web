@@ -20,72 +20,80 @@ import { Span } from '../models/Trace';
 
 @Injectable({ providedIn: 'root' })
 export class TraceService {
-    private selectedTraceRowSource = new BehaviorSubject<Span | undefined>(undefined);
-    selectedTraceRow$ = this.selectedTraceRowSource.asObservable();
+  private selectedTraceRowSource = new BehaviorSubject<Span | undefined>(
+    undefined
+  );
+  selectedTraceRow$ = this.selectedTraceRowSource.asObservable();
 
-    private eventDataSource = new BehaviorSubject<Map<string, any> | undefined>(undefined);
-    eventData$ = this.eventDataSource.asObservable();
+  private eventDataSource = new BehaviorSubject<Map<string, any> | undefined>(
+    undefined
+  );
+  eventData$ = this.eventDataSource.asObservable();
 
-    private hoveredMessageIndiciesSource = new BehaviorSubject<number[]>([]);
-    hoveredMessageIndicies$ = this.hoveredMessageIndiciesSource.asObservable();
+  private hoveredMessageIndiciesSource = new BehaviorSubject<number[]>([]);
+  hoveredMessageIndicies$ = this.hoveredMessageIndiciesSource.asObservable();
 
-    private messagesSource = new BehaviorSubject<any[]>([]);
-    messages$ = this.messagesSource.asObservable();
+  private messagesSource = new BehaviorSubject<any[]>([]);
+  messages$ = this.messagesSource.asObservable();
 
-    selectedRow(span: Span | undefined) {
-        this.selectedTraceRowSource.next(span);
+  selectedRow(span: Span | undefined) {
+    this.selectedTraceRowSource.next(span);
+  }
+
+  setEventData(data: Map<string, any> | undefined) {
+    this.eventDataSource.next(data);
+  }
+
+  setMessages(messages: any[]) {
+    this.messagesSource.next(messages);
+  }
+
+  setHoveredMessages(span: Span | undefined, invocationId: string) {
+    if (!span) {
+      this.hoveredMessageIndiciesSource.next([]);
+      return;
     }
 
-    setEventData(data: Map<string, any> | undefined) {
-        this.eventDataSource.next(data);
-    }
+    const attributes = span.attributes;
+    const hasEvent: boolean =
+      attributes && attributes['gcp.vertex.agent.event_id'];
+    let index = 0;
+    const messageIndices = [];
+    for (const msg of this.messagesSource.value) {
+      if (msg.role == 'user') {
+        index++;
+        continue;
+      }
 
-    setMessages(messages: any[]) {
-        this.messagesSource.next(messages)
-    }
+      if (
+        this.eventDataSource.value?.get(msg.eventId).invocationId !=
+        invocationId
+      ) {
+        index++;
+        continue;
+      }
 
-    setHoveredMessages(span: Span | undefined, invocationId: string) {
-        if (!span) {
-            this.hoveredMessageIndiciesSource.next([]);
-            return;
+      if (!hasEvent) {
+        messageIndices.push(index);
+        index++;
+        continue;
+      } else {
+        if (attributes['gcp.vertex.agent.event_id'] == msg.eventId) {
+          messageIndices.push(index);
+          index++;
+          continue;
+        } else {
+          index++;
+          continue;
         }
-
-        const attributes = span.attributes
-        const hasEvent: boolean = attributes && attributes['gcp.vertex.agent.event_id']
-        let index = 0;
-        const messageIndices = [];
-        for (const msg of this.messagesSource.value) {
-            if (msg.role == 'user') {
-                index++
-                continue
-            }
-            
-            if (this.eventDataSource.value?.get(msg.eventId).invocationId != invocationId) {
-                index++
-                continue
-            }
-
-            if (!hasEvent) {
-                messageIndices.push(index)
-                index++
-                continue
-            } else {
-                if (attributes['gcp.vertex.agent.event_id'] == msg.eventId) {
-                    messageIndices.push(index)
-                    index++
-                    continue
-                } else {
-                    index++
-                    continue
-                }
-            }
-        }
-        this.hoveredMessageIndiciesSource.next(messageIndices);
+      }
     }
+    this.hoveredMessageIndiciesSource.next(messageIndices);
+  }
 
-    resetTraceService() {
-        this.eventDataSource.next(undefined);
-        this.messagesSource.next([]);
-        this.hoveredMessageIndiciesSource.next([])
-    }
+  resetTraceService() {
+    this.eventDataSource.next(undefined);
+    this.messagesSource.next([]);
+    this.hoveredMessageIndiciesSource.next([]);
+  }
 }

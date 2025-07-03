@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
-import {createJSONEditor, Mode} from 'vanilla-jsoneditor';
+import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
+import { createJSONEditor, Mode } from 'vanilla-jsoneditor';
 
 @Component({
   selector: 'app-json-editor',

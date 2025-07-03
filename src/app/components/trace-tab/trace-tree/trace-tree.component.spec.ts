@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {TraceTreeComponent} from './trace-tree.component';
+import { TraceTreeComponent } from './trace-tree.component';
 
 describe('TraceTreeComponent', () => {
   let component: TraceTreeComponent;
   let fixture: ComponentFixture<TraceTreeComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({imports: [TraceTreeComponent]})
-        .compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [TraceTreeComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TraceTreeComponent);
     component = fixture.componentInstance;

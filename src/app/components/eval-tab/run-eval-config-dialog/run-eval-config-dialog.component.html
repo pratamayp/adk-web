@@ -18,10 +18,19 @@
   <mat-dialog-content>
     <form [formGroup]="evalForm" class="eval-form">
       <div class="metric-row">
-        <div class="metric-name">Tool trajectory avg score: </div>
+        <div class="metric-name">Tool trajectory avg score:</div>
         <div class="flex-1 pl-4">
-          <mat-slider min="0" max="1" step="0.1" thumbLabel class="threshold-slider">
-            <input matSliderThumb formControlName="tool_trajectory_avg_score_threshold" />
+          <mat-slider
+            min="0"
+            max="1"
+            step="0.1"
+            thumbLabel
+            class="threshold-slider"
+          >
+            <input
+              matSliderThumb
+              formControlName="tool_trajectory_avg_score_threshold"
+            />
           </mat-slider>
           <!-- Display current threshold value -->
           <span class="threshold-value">
@@ -31,10 +40,19 @@
       </div>
 
       <div class="metric-row">
-        <div class="metric-name">Response match score: </div>
+        <div class="metric-name">Response match score:</div>
         <div class="flex-1 pl-4">
-          <mat-slider min="0" max="1" step="0.1" thumbLabel class="threshold-slider">
-            <input matSliderThumb formControlName="response_match_score_threshold" />
+          <mat-slider
+            min="0"
+            max="1"
+            step="0.1"
+            thumbLabel
+            class="threshold-slider"
+          >
+            <input
+              matSliderThumb
+              formControlName="response_match_score_threshold"
+            />
           </mat-slider>
           <!-- Display current threshold value -->
           <span class="threshold-value">
@@ -46,7 +64,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="dialog-actions">
-    <button mat-button (click)="onCancel()" class="cancel-button">Cancel</button>
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      Cancel
+    </button>
     <button mat-button (click)="onStart()" class="save-button">Start</button>
   </mat-dialog-actions>
 </div>

@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {LiveRequest} from '../models/LiveRequest';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { LiveRequest } from '../models/LiveRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +26,7 @@ import {LiveRequest} from '../models/LiveRequest';
 export class WebSocketService {
   private socket$!: WebSocketSubject<any>;
   private messages$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  private audioContext = new AudioContext({sampleRate: 22000});
+  private audioContext = new AudioContext({ sampleRate: 22000 });
   private audioBuffer: Uint8Array[] = [];
   private audioIntervalId: any = null;
   private lastAudioTime = 0;
@@ -52,7 +52,7 @@ export class WebSocketService {
       },
       (error) => {
         console.error('WebSocket error:', error);
-      },
+      }
     );
     this.audioIntervalId = setInterval(() => this.processBufferedAudio(), 250);
   }
@@ -96,7 +96,7 @@ export class WebSocketService {
       msg['content']['parts'][0]['inlineData']
     ) {
       const pcmBytes = this.base64ToUint8Array(
-          msg['content']['parts'][0]['inlineData']['data'],
+        msg['content']['parts'][0]['inlineData']['data']
       );
       this.audioBuffer.push(pcmBytes);
     }
@@ -108,7 +108,7 @@ export class WebSocketService {
     // Merge received chunks into a single buffer
     const totalLength = this.audioBuffer.reduce(
       (sum, chunk) => sum + chunk.length,
-      0,
+      0
     );
     const mergedBuffer = new Uint8Array(totalLength);
     let offset = 0;
@@ -142,7 +142,7 @@ export class WebSocketService {
     const buffer = this.audioContext.createBuffer(
       1,
       float32Array.length,
-      22000,
+      22000
     );
     buffer.copyToChannel(float32Array, 0);
 

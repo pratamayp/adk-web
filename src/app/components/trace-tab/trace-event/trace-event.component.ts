@@ -27,13 +27,13 @@ import { instance } from '@viz-js/viz';
   selector: 'app-trace-event',
   templateUrl: './trace-event.component.html',
   styleUrl: './trace-event.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class TraceEventComponent implements OnInit {
-  @Input() userId: string = "";
-  @Input() sessionId: string = "";
-  @Input() appName: string = "";
-  @Output() panelClosed = new EventEmitter<boolean>;
+  @Input() userId: string = '';
+  @Input() sessionId: string = '';
+  @Input() appName: string = '';
+  @Output() panelClosed = new EventEmitter<boolean>();
 
   renderedEventGraph: SafeHtml | undefined;
   eventData: Map<string, any> | undefined;
@@ -45,15 +45,15 @@ export class TraceEventComponent implements OnInit {
   llmRequestKey = 'gcp.vertex.agent.llm_request';
   llmResponseKey = 'gcp.vertex.agent.llm_response';
 
-
-  constructor(private dialog: MatDialog,
+  constructor(
+    private dialog: MatDialog,
     private traceService: TraceService,
     private eventService: EventService,
-    private sanitizer: DomSanitizer) {
-  }
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
-    this.traceService.selectedTraceRow$.subscribe(span => {
+    this.traceService.selectedTraceRow$.subscribe((span) => {
       this.selectedRow = span;
       const eventId = this.getEventIdFromSpan();
       if (eventId) {
@@ -64,7 +64,7 @@ export class TraceEventComponent implements OnInit {
         this.getEventGraph(eventId);
       }
     });
-    this.traceService.eventData$.subscribe(e => this.eventData = e);
+    this.traceService.eventData$.subscribe((e) => (this.eventData = e));
   }
 
   openViewImageDialog(imageData: string | null) {
@@ -86,18 +86,15 @@ export class TraceEventComponent implements OnInit {
   }
 
   getEventIdFromSpan() {
-    if (!this.selectedRow) { return undefined; }
+    if (!this.selectedRow) {
+      return undefined;
+    }
     return this.selectedRow.attributes['gcp.vertex.agent.event_id'];
   }
 
   getEventGraph(eventId: string) {
     this.eventService
-      .getEvent(
-        this.userId,
-        this.appName,
-        this.sessionId,
-        eventId,
-      )
+      .getEvent(this.userId, this.appName, this.sessionId, eventId)
       .subscribe(async (res) => {
         if (!res.dotSrc) {
           this.renderedEventGraph = undefined;

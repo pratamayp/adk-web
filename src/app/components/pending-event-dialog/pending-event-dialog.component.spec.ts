@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {PendingEventDialogComponent} from './pending-event-dialog.component';
+import { PendingEventDialogComponent } from './pending-event-dialog.component';
 
 describe('PendingEventDialogComponent', () => {
   let component: PendingEventDialogComponent;

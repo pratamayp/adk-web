@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {DomSanitizer, SafeHtml, SafeUrl} from '@angular/platform-browser';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer, SafeHtml, SafeUrl } from '@angular/platform-browser';
 
 export interface ViewImageDialogData {
-  imageData: string|null;
+  imageData: string | null;
 }
 
 @Component({
@@ -32,14 +31,15 @@ export interface ViewImageDialogData {
 })
 export class ViewImageDialogComponent implements OnInit {
   // Property to hold the sanitized image URL or SVG HTML
-  displayContent: SafeUrl|SafeHtml|null = null;
+  displayContent: SafeUrl | SafeHtml | null = null;
   // Flag to determine if the content is SVG
   isSvgContent: boolean = false;
 
   constructor(
-      public dialogRef: MatDialogRef<ViewImageDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: ViewImageDialogData,
-      private sanitizer: DomSanitizer) {}
+    public dialogRef: MatDialogRef<ViewImageDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ViewImageDialogData,
+    private sanitizer: DomSanitizer
+  ) {}
 
   /**
    * Lifecycle hook to initialize the component.
@@ -69,11 +69,13 @@ export class ViewImageDialogComponent implements OnInit {
     } else {
       // Assume it's base64 data if not SVG.
       // Ensure it has the correct data URI prefix.
-      const prefix =
-          imageData.startsWith('data:image/') ? '' : 'data:image/png;base64,';
+      const prefix = imageData.startsWith('data:image/')
+        ? ''
+        : 'data:image/png;base64,';
       this.isSvgContent = false;
-      this.displayContent =
-          this.sanitizer.bypassSecurityTrustUrl(prefix + imageData);
+      this.displayContent = this.sanitizer.bypassSecurityTrustUrl(
+        prefix + imageData
+      );
     }
   }
 

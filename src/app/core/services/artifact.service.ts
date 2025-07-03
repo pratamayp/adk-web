@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {URLUtil} from '../../../utils/url-util';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { URLUtil } from '../../../utils/url-util';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class ArtifactService {
     userId: string,
     appName: string,
     sessionId: string,
-    artifactName: string,
+    artifactName: string
   ) {
     const url =
       this.apiServerDomain +
@@ -43,7 +43,7 @@ export class ArtifactService {
     appName: string,
     sessionId: string,
     artifactName: string,
-    versionId: string,
+    versionId: string
   ) {
     const url =
       this.apiServerDomain +

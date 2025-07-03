@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {AgentRunRequest} from '../../core/models/AgentRunRequest';
-import {AgentService} from '../../core/services/agent.service';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AgentRunRequest } from '../../core/models/AgentRunRequest';
+import { AgentService } from '../../core/services/agent.service';
 
 @Component({
   selector: 'app-pending-event-dialog',
@@ -38,7 +38,7 @@ export class PendingEventDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<PendingEventDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private agentService: AgentService,
+    private agentService: AgentService
   ) {
     this.selectedEvent = data.event;
     this.appName = data.appName;
@@ -58,17 +58,17 @@ export class PendingEventDialogComponent {
       userId: this.userId,
       sessionId: this.sessionId,
       newMessage: {
-        'role': 'user',
-        'parts': [],
+        role: 'user',
+        parts: [],
       },
     };
     if (this.selectedEvent.response) {
       req.functionCallEventId = this.functionCallEventId;
       req.newMessage.parts.push({
-        'function_response': {
+        function_response: {
           id: this.selectedEvent.id,
           name: this.selectedEvent.name,
-          response: {'response': this.selectedEvent.response},
+          response: { response: this.selectedEvent.response },
         },
       });
     }

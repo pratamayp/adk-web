@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Subject, switchMap} from 'rxjs';
-import {Session} from '../../core/models/Session';
-import {SessionService} from '../../core/services/session.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Subject, switchMap } from 'rxjs';
+import { Session } from '../../core/models/Session';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-session-tab',
@@ -41,22 +41,21 @@ export class SessionTabComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.refreshSessionsSubject
-        .pipe(
-            switchMap(
-                () =>
-                    this.sessionService.listSessions(this.userId, this.appName),
-                ),
-            )
-        .subscribe((res) => {
-          res = res.sort(
-              (a: any, b: any) =>
-                  Number(b.lastUpdateTime) - Number(a.lastUpdateTime),
-          );
-          this.sessionList = res;
-        });
+      .pipe(
+        switchMap(() =>
+          this.sessionService.listSessions(this.userId, this.appName)
+        )
+      )
+      .subscribe((res) => {
+        res = res.sort(
+          (a: any, b: any) =>
+            Number(b.lastUpdateTime) - Number(a.lastUpdateTime)
+        );
+        this.sessionList = res;
+      });
   }
 
   ngOnInit(): void {

@@ -123,6 +123,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+
   .message-card {
     background-color: #004a77;
     align-self: flex-end;
@@ -134,6 +135,7 @@
 .bot-message {
   display: flex;
   align-items: center;
+
   .message-card {
     background-color: #303030;
     align-self: flex-start;
@@ -429,6 +431,7 @@ button {
 
 :host ::ng-deep .mat-mdc-mini-fab {
   background-color: white;
+
   mat-icon {
     color: black;
   }
@@ -497,13 +500,10 @@ button {
 }
 
 .app-select-container {
-  @include mat.select-overrides(
-    (
-      placeholder-text-color: #8ab4f8,
+  @include mat.select-overrides((placeholder-text-color: #8ab4f8,
       enabled-trigger-text-color: #8ab4f8,
       enabled-arrow-color: #8ab4f8,
-    )
-  );
+    ));
 }
 
 .json-viewer-container {
@@ -553,12 +553,9 @@ button {
 .drawer-header {
   display: flex;
   justify-content: space-between;
-  @include mat.button-overrides(
-    (
-      filled-container-color: #89b4f8,
+  @include mat.button-overrides((filled-container-color: #89b4f8,
       filled-label-text-color: black,
-    )
-  );
+    ));
 }
 
 .chat-toolbar {
@@ -628,9 +625,7 @@ button {
 }
 
 .toolbar-sse-toggle {
-  @include mat.slide-toggle-overrides(
-    (
-      label-text-size: 14px,
+  @include mat.slide-toggle-overrides((label-text-size: 14px,
       label-text-color: #9aa0a6,
       selected-track-color: #8ab4f9,
       selected-focus-track-color: #8ab4f9,
@@ -642,8 +637,7 @@ button {
       track-width: 46px,
       track-outline-color: #1b73e8,
       with-icon-handle-size: 20px,
-    )
-  );
+    ));
 }
 
 .image-container {

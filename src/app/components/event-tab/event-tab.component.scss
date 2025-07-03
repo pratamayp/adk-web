@@ -56,15 +56,12 @@
 }
 
 .event-list {
-  @include mat.list-overrides(
-    (
-      active-indicator-color: orange,
+  @include mat.list-overrides((active-indicator-color: orange,
       list-item-container-color: #2b2b2f,
       list-item-label-text-size: 14px,
       list-item-label-text-weight: 400,
       list-item-one-line-container-height: 52px,
-    )
-  );
+    ));
 }
 
 :host ::ng-deep .mdc-list-item {

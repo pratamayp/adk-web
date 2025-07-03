@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {env} from '../env/env';
+import { env } from '../env/env';
 
 export class URLUtil {
   /**

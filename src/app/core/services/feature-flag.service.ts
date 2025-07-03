@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {inject, Injectable} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Observable, of, pipe} from 'rxjs';
-import {map} from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, of, pipe } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export const IMPORT_SESSION = 'import_session';
 export const EDIT_FUNCTION_ARGS = 'edit_function_args';
@@ -26,7 +26,7 @@ export const SESSION_URL = 'session_url';
 export const A2A_CARD = 'a2a_card';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeatureFlagService {
   private route = inject(ActivatedRoute);
@@ -35,13 +35,13 @@ export class FeatureFlagService {
 
   isImportSessionEnabled(): Observable<boolean> {
     return this.route.queryParams.pipe(
-        map((params) => params[IMPORT_SESSION] === 'true'),
+      map((params) => params[IMPORT_SESSION] === 'true')
     );
   }
 
   isEditFunctionArgsEnabled(): Observable<boolean> {
     return this.route.queryParams.pipe(
-        map((params) => params[EDIT_FUNCTION_ARGS] === 'true'),
+      map((params) => params[EDIT_FUNCTION_ARGS] === 'true')
     );
   }
 
@@ -51,7 +51,7 @@ export class FeatureFlagService {
 
   isA2ACardEnabled(): Observable<boolean> {
     return this.route.queryParams.pipe(
-        map((params) => params[A2A_CARD] === 'true'),
+      map((params) => params[A2A_CARD] === 'true')
     );
   }
 }

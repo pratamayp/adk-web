@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-import {DownloadService} from '../../core/services/download.service';
-import {AudioPlayerComponent} from '../audio-player/audio-player.component';
-import {ViewImageDialogComponent} from '../view-image-dialog/view-image-dialog.component';
+import { DownloadService } from '../../core/services/download.service';
+import { AudioPlayerComponent } from '../audio-player/audio-player.component';
+import { ViewImageDialogComponent } from '../view-image-dialog/view-image-dialog.component';
 
 const DEFAULT_ARTIFACT_NAME = 'default_artifact_name';
 
@@ -30,7 +30,7 @@ const DEFAULT_ARTIFACT_NAME = 'default_artifact_name';
 export enum MediaType {
   IMAGE = 'image',
   AUDIO = 'audio',
-  TEXT = 'text',  // for text/html
+  TEXT = 'text', // for text/html
   UNSPECIFIED = 'unspecified',
 }
 
@@ -69,7 +69,6 @@ export function isArtifactImage(mimeType: string): boolean {
   return mimeType.startsWith('image/');
 }
 
-
 /**
  * Returns true if the mime type is an audio type.
  */
@@ -94,7 +93,8 @@ export function openBase64InNewTab(dataUrl: string, mimeType: string) {
 
     if (dataUrl.startsWith('data:') && dataUrl.includes(';base64,')) {
       base64DataString = base64DataString.substring(
-          base64DataString.indexOf(';base64,') + ';base64,'.length);
+        base64DataString.indexOf(';base64,') + ';base64,'.length
+      );
     }
 
     if (!mimeType || !base64DataString) {
@@ -108,7 +108,7 @@ export function openBase64InNewTab(dataUrl: string, mimeType: string) {
     }
     const byteArray = new Uint8Array(byteNumbers);
 
-    const blob = new Blob([byteArray], {type: mimeType});
+    const blob = new Blob([byteArray], { type: mimeType });
 
     const blobUrl = URL.createObjectURL(blob);
 
@@ -117,11 +117,13 @@ export function openBase64InNewTab(dataUrl: string, mimeType: string) {
       newWindow.focus();
     } else {
       alert(
-          'Pop-up blocked! Please allow pop-ups for this site to open the data in a new tab.');
+        'Pop-up blocked! Please allow pop-ups for this site to open the data in a new tab.'
+      );
     }
   } catch (e) {
     alert(
-        'Could not open the data. It might be invalid or too large. Check the browser console for errors.');
+      'Could not open the data. It might be invalid or too large. Check the browser console for errors.'
+    );
   }
 }
 
@@ -142,8 +144,8 @@ export class ArtifactTabComponent implements OnChanges {
   protected openBase64InNewTab = openBase64InNewTab;
 
   constructor(
-      private downloadService: DownloadService,
-      private dialog: MatDialog,
+    private downloadService: DownloadService,
+    private dialog: MatDialog
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -152,7 +154,7 @@ export class ArtifactTabComponent implements OnChanges {
 
       for (const artifactId of this.getDistinctArtifactIds()) {
         this.selectedArtifacts.push(
-            this.getSortedArtifactsFromId(artifactId)[0],
+          this.getSortedArtifactsFromId(artifactId)[0]
         );
       }
     }
@@ -160,9 +162,9 @@ export class ArtifactTabComponent implements OnChanges {
 
   protected downloadArtifact(artifact: any) {
     this.downloadService.downloadBase64Data(
-        artifact.data,
-        artifact.mimeType,
-        artifact.id,
+      artifact.data,
+      artifact.mimeType,
+      artifact.id
     );
   }
 
@@ -175,10 +177,11 @@ export class ArtifactTabComponent implements OnChanges {
   }
 
   protected getSortedArtifactsFromId(artifactId: string) {
-    return this.artifacts.filter((artifact) => artifact.id === artifactId)
-        .sort((a, b) => {
-          return b.versionId - a.versionId;
-        });
+    return this.artifacts
+      .filter((artifact) => artifact.id === artifactId)
+      .sort((a, b) => {
+        return b.versionId - a.versionId;
+      });
   }
 
   protected onArtifactVersionChange(event: any, index: number) {
@@ -186,8 +189,11 @@ export class ArtifactTabComponent implements OnChanges {
   }
 
   protected openViewImageDialog(fullBase64DataUrl: string) {
-    if (!fullBase64DataUrl || !fullBase64DataUrl.startsWith('data:') ||
-        fullBase64DataUrl.indexOf(';base64,') === -1) {
+    if (
+      !fullBase64DataUrl ||
+      !fullBase64DataUrl.startsWith('data:') ||
+      fullBase64DataUrl.indexOf(';base64,') === -1
+    ) {
       return;
     }
 

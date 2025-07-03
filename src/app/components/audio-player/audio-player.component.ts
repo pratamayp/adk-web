@@ -15,7 +15,14 @@
  * limitations under the License.
  */
 
-import {Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-audio-player',
@@ -50,7 +57,7 @@ export class AudioPlayerComponent implements OnChanges {
 
     // If the audio element is already rendered, load the new source
     if (this.audioPlayerRef && this.audioPlayerRef.nativeElement) {
-      this.audioPlayerRef.nativeElement.load();  // Reload the audio element
+      this.audioPlayerRef.nativeElement.load(); // Reload the audio element
     }
   }
 

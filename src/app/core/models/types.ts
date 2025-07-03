@@ -25,7 +25,7 @@ export interface Invocation {
 
 export interface Content {
   parts?: any[];
-  role?: string|null;
+  role?: string | null;
 }
 
 export interface IntermediateData {

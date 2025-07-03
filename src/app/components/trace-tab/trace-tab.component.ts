@@ -14,14 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges} from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChange,
+  SimpleChanges,
+} from '@angular/core';
 @Component({
   selector: 'app-trace-tab',
   templateUrl: './trace-tab.component.html',
   styleUrl: './trace-tab.component.scss',
-  standalone: false
+  standalone: false,
 })
-
 export class TraceTabComponent implements OnInit, OnChanges {
   @Input() traceData: any = [];
   invocTraces = new Map<string, any[]>();
@@ -51,33 +57,36 @@ export class TraceTabComponent implements OnInit, OnChanges {
     }, new Map<string, any[]>());
 
     for (const [key, value] of this.invocTraces) {
-      this.invocToUserMsg.set(key, this.findUserMsgFromInvocGroup(value))
+      this.invocToUserMsg.set(key, this.findUserMsgFromInvocGroup(value));
     }
   }
 
-
   getArray(n: number): number[] {
-    return Array.from({length: n});
+    return Array.from({ length: n });
   }
 
   findUserMsgFromInvocGroup(group: any[]) {
     const eventItem = group?.find(
-        item => item.attributes !== undefined &&
-            'gcp.vertex.agent.invocation_id' in item.attributes)
-    const requestJson =
-        JSON.parse(eventItem.attributes['gcp.vertex.agent.llm_request'])
-    const userContent =
-        requestJson.contents.filter((c: any) => c.role == 'user').at(-1)
+      (item) =>
+        item.attributes !== undefined &&
+        'gcp.vertex.agent.invocation_id' in item.attributes
+    );
+    const requestJson = JSON.parse(
+      eventItem.attributes['gcp.vertex.agent.llm_request']
+    );
+    const userContent = requestJson.contents
+      .filter((c: any) => c.role == 'user')
+      .at(-1);
     return userContent.parts[0]?.text ?? '[attachment]';
   }
 
   findInvocIdFromTraceId(traceId: string) {
     const group = this.invocTraces.get(traceId);
-    return group
-        ?.find(
-            item => item.attributes !== undefined &&
-                'gcp.vertex.agent.invocation_id' in item.attributes)
-        .attributes['gcp.vertex.agent.invocation_id']
+    return group?.find(
+      (item) =>
+        item.attributes !== undefined &&
+        'gcp.vertex.agent.invocation_id' in item.attributes
+    ).attributes['gcp.vertex.agent.invocation_id'];
   }
 
   mapOrderPreservingSort = (a: any, b: any): number => 0;

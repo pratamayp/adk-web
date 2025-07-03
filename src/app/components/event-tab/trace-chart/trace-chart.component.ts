@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnInit } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface Span {
   name: string;
@@ -45,7 +45,7 @@ interface TimeTick {
   selector: 'app-trace-chart',
   templateUrl: './trace-chart.component.html',
   styleUrl: './trace-chart.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class TraceChartComponent implements OnInit {
   tree: Span[] = [];
@@ -73,12 +73,12 @@ export class TraceChartComponent implements OnInit {
   }
 
   buildSpanTree(spans: Span[]): Span[] {
-    const spanClones = spans.map(span => ({ ...span })); 
+    const spanClones = spans.map((span) => ({ ...span }));
     const spanMap = new Map<string, Span>();
     const roots: Span[] = [];
 
-    spanClones.forEach(span => spanMap.set(span.span_id, span));
-    spanClones.forEach(span => {
+    spanClones.forEach((span) => spanMap.set(span.span_id, span));
+    spanClones.forEach((span) => {
       if (span.parent_span_id && spanMap.has(span.parent_span_id)) {
         const parent = spanMap.get(span.parent_span_id)!;
         parent.children = parent.children || [];
@@ -92,8 +92,8 @@ export class TraceChartComponent implements OnInit {
   }
 
   getGlobalTimes(spans: Span[]) {
-    const start = Math.min(...spans.map(s => this.toMs(s.start_time)));
-    const end = Math.max(...spans.map(s => this.toMs(s.end_time)));
+    const start = Math.min(...spans.map((s) => this.toMs(s.start_time)));
+    const end = Math.max(...spans.map((s) => this.toMs(s.end_time)));
     return { start, duration: end - start };
   }
 
@@ -102,19 +102,27 @@ export class TraceChartComponent implements OnInit {
   }
 
   getRelativeStart(span: Span): number {
-    return ((this.toMs(span.start_time) - this.baseStartTimeMs) / this.totalDurationMs) * 100;
+    return (
+      ((this.toMs(span.start_time) - this.baseStartTimeMs) /
+        this.totalDurationMs) *
+      100
+    );
   }
 
   getRelativeWidth(span: Span): number {
-    return ((this.toMs(span.end_time) - this.toMs(span.start_time)) / this.totalDurationMs) * 100;
+    return (
+      ((this.toMs(span.end_time) - this.toMs(span.start_time)) /
+        this.totalDurationMs) *
+      100
+    );
   }
 
   flattenTree(spans: Span[], level: number = 0): any[] {
-    const tree = spans.flatMap(span => [
+    const tree = spans.flatMap((span) => [
       { span, level },
-      ...(span.children ? this.flattenTree(span.children, level + 1) : [])
+      ...(span.children ? this.flattenTree(span.children, level + 1) : []),
     ]);
-    return tree
+    return tree;
   }
 
   getSpanIcon(label: string) {
@@ -123,7 +131,7 @@ export class TraceChartComponent implements OnInit {
         return value;
       }
     }
-    return "start";
+    return 'start';
   }
 
   getArray(n: number): number[] {

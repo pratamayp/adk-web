@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface DeleteSessionDialogData {
   title: string;
@@ -33,7 +33,7 @@ export interface DeleteSessionDialogData {
 export class DeleteSessionDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<DeleteSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DeleteSessionDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: DeleteSessionDialogData
   ) {}
 
   onConfirm(): void {

@@ -15,13 +15,17 @@
 -->
 
 <h2 mat-dialog-title>Add Current Session To Eval Set</h2>
-<mat-dialog-content>
-  Please enter the eval case name
-</mat-dialog-content>
-<mat-form-field style="padding-left:20px; padding-right: 24px;">
-    <input [(ngModel)]="newCaseId" matInput (keydown.enter)="createNewEvalCase()">
-  </mat-form-field>
+<mat-dialog-content> Please enter the eval case name </mat-dialog-content>
+<mat-form-field style="padding-left: 20px; padding-right: 24px">
+  <input
+    [(ngModel)]="newCaseId"
+    matInput
+    (keydown.enter)="createNewEvalCase()"
+  />
+</mat-form-field>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button cdkFocusInitial (click)="createNewEvalCase()">Create</button>
+  <button mat-button cdkFocusInitial (click)="createNewEvalCase()">
+    Create
+  </button>
 </mat-dialog-actions>

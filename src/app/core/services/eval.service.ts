@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
-import {URLUtil} from '../../../utils/url-util';
-import {EvalCase} from '../../components/eval-tab/eval-tab.component';
+import { URLUtil } from '../../../utils/url-util';
+import { EvalCase } from '../../components/eval-tab/eval-tab.component';
 
 @Injectable({
   providedIn: 'root',
@@ -40,8 +40,8 @@ export class EvalService {
   createNewEvalSet(appName: string, evalSetId: string) {
     if (this.apiServerDomain != undefined) {
       const url =
-      this.apiServerDomain + `/apps/${appName}/eval_sets/${evalSetId}`;
-    return this.http.post<any>(url, {});
+        this.apiServerDomain + `/apps/${appName}/eval_sets/${evalSetId}`;
+      return this.http.post<any>(url, {});
     }
     return new Observable<any>();
   }
@@ -49,18 +49,18 @@ export class EvalService {
   listEvalCases(appName: string, evalSetId: string) {
     if (this.apiServerDomain != undefined) {
       const url =
-      this.apiServerDomain + `/apps/${appName}/eval_sets/${evalSetId}/evals`;
+        this.apiServerDomain + `/apps/${appName}/eval_sets/${evalSetId}/evals`;
       return this.http.get<any>(url, {});
     }
     return new Observable<any>();
   }
 
   addCurrentSession(
-      appName: string,
-      evalSetId: string,
-      evalId: string,
-      sessionId: string,
-      userId: string,
+    appName: string,
+    evalSetId: string,
+    evalId: string,
+    sessionId: string,
+    userId: string
   ) {
     const url =
       this.apiServerDomain +
@@ -76,7 +76,7 @@ export class EvalService {
     appName: string,
     evalSetId: string,
     evalIds: string[],
-    evalMetrics: any[],
+    evalMetrics: any[]
   ) {
     const url =
       this.apiServerDomain + `/apps/${appName}/eval_sets/${evalSetId}/run_eval`;
@@ -115,10 +115,14 @@ export class EvalService {
   }
 
   updateEvalCase(
-      appName: string, evalSetId: string, evalCaseId: string,
-      updatedEvalCase: EvalCase) {
-    const url = this.apiServerDomain +
-        `/apps/${appName}/eval_sets/${evalSetId}/evals/${evalCaseId}`;
+    appName: string,
+    evalSetId: string,
+    evalCaseId: string,
+    updatedEvalCase: EvalCase
+  ) {
+    const url =
+      this.apiServerDomain +
+      `/apps/${appName}/eval_sets/${evalSetId}/evals/${evalCaseId}`;
     return this.http.put<any>(url, {
       evalId: evalCaseId,
       conversation: updatedEvalCase.conversation,
@@ -128,8 +132,9 @@ export class EvalService {
   }
 
   deleteEvalCase(appName: string, evalSetId: string, evalCaseId: string) {
-    const url = this.apiServerDomain +
-        `/apps/${appName}/eval_sets/${evalSetId}/evals/${evalCaseId}`;
+    const url =
+      this.apiServerDomain +
+      `/apps/${appName}/eval_sets/${evalSetId}/evals/${evalCaseId}`;
     return this.http.delete<any>(url, {});
   }
 }

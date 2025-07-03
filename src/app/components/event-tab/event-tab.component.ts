@@ -15,10 +15,17 @@
  * limitations under the License.
  */
 
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import {TraceChartComponent} from './trace-chart/trace-chart.component';
+import { TraceChartComponent } from './trace-chart/trace-chart.component';
 
 @Component({
   selector: 'app-event-tab',
@@ -81,11 +88,11 @@ export class EventTabComponent implements OnChanges {
 
   findInvocIdFromTraceId(traceId: string) {
     const group = this.invocTraces.get(traceId);
-    return group
-        ?.find(
-            item => item.attributes !== undefined &&
-                'gcp.vertex.agent.invocation_id' in item.attributes)
-        .attributes['gcp.vertex.agent.invocation_id']
+    return group?.find(
+      (item) =>
+        item.attributes !== undefined &&
+        'gcp.vertex.agent.invocation_id' in item.attributes
+    ).attributes['gcp.vertex.agent.invocation_id'];
   }
 
   openDialog(traceId: string): void {
@@ -94,7 +101,7 @@ export class EventTabComponent implements OnChanges {
       maxWidth: '90vw',
       data: {
         spans: this.invocTraces.get(traceId),
-        invocId: this.findInvocIdFromTraceId(traceId)
+        invocId: this.findInvocIdFromTraceId(traceId),
       },
     });
   }

@@ -21,8 +21,8 @@ import {
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
-import {LiveRequest} from '../models/LiveRequest';
-import {WebSocketService} from './websocket.service';
+import { LiveRequest } from '../models/LiveRequest';
+import { WebSocketService } from './websocket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,7 @@ export class VideoService {
 
   constructor(
     private wsService: WebSocketService,
-    rendererFactory: RendererFactory2,
+    rendererFactory: RendererFactory2
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -58,7 +58,7 @@ export class VideoService {
     this.createVideoElement(container);
 
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({video: true});
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
       this.videoElement.srcObject = this.stream;
 
       this.mediaRecorder = new MediaRecorder(this.stream, {
@@ -68,7 +68,7 @@ export class VideoService {
       this.mediaRecorder.start(1000);
       this.videoIntervalId = setInterval(
         () => this.captureAndSendFrame(),
-        1000,
+        1000
       );
     } catch (error) {
       console.error('Error accessing camera/microphone:', error);
@@ -126,7 +126,7 @@ export class VideoService {
     // Concatenate all accumulated chunks into one Uint8Array
     const totalLength = this.videoBuffer.reduce(
       (sum, chunk) => sum + chunk.length,
-      0,
+      0
     );
     const combinedBuffer = new Uint8Array(totalLength);
 

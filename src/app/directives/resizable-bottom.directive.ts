@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
-import {AfterViewInit, Directive, ElementRef, HostListener, Renderer2} from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+  Renderer2,
+} from '@angular/core';
 
 interface ResizingEvent {
   isResizing: boolean;
@@ -30,7 +36,7 @@ interface ResizingEvent {
 export class ResizableBottomDirective implements AfterViewInit {
   private readonly bottomMinHeight = 310;
   private bottomMaxHeight;
-  private resizeHandle: HTMLElement|null = null;
+  private resizeHandle: HTMLElement | null = null;
 
   private resizingEvent: ResizingEvent = {
     isResizing: false,
@@ -43,15 +49,22 @@ export class ResizableBottomDirective implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.resizeHandle =
-        document.getElementsByClassName('bottom-resize-handler')[0] as HTMLElement;
-    this.renderer.listen(
-        this.resizeHandle, 'mousedown',
-        (event) => this.onResizeHandleMouseDown(event));
-    document.documentElement.style.setProperty('--bottom-panel-height', '310px');
+    this.resizeHandle = document.getElementsByClassName(
+      'bottom-resize-handler'
+    )[0] as HTMLElement;
+    this.renderer.listen(this.resizeHandle, 'mousedown', (event) =>
+      this.onResizeHandleMouseDown(event)
+    );
+    document.documentElement.style.setProperty(
+      '--bottom-panel-height',
+      '310px'
+    );
 
     this.renderer.setStyle(
-        this.el.nativeElement, 'height', 'var(--bottom-panel-height)');
+      this.el.nativeElement,
+      'height',
+      'var(--bottom-panel-height)'
+    );
   }
 
   private onResizeHandleMouseDown(event: MouseEvent): void {
@@ -88,13 +101,19 @@ export class ResizableBottomDirective implements AfterViewInit {
 
   private set bottomPanelHeight(height: number) {
     const clampedHeight = Math.min(
-        Math.max(height, this.bottomMinHeight), this.bottomMaxHeight);
-    document.body.style.setProperty('--bottom-panel-height', `${clampedHeight}px`);
+      Math.max(height, this.bottomMinHeight),
+      this.bottomMaxHeight
+    );
+    document.body.style.setProperty(
+      '--bottom-panel-height',
+      `${clampedHeight}px`
+    );
   }
 
   private get bottomPanelHeight(): number {
-    const heightString =
-        getComputedStyle(document.body).getPropertyValue('--bottom-panel-height');
+    const heightString = getComputedStyle(document.body).getPropertyValue(
+      '--bottom-panel-height'
+    );
     const parsedHeight = parseInt(heightString, 10);
 
     return isNaN(parsedHeight) ? 500 : parsedHeight;

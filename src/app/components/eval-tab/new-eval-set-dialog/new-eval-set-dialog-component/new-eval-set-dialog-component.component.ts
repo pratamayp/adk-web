@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {Component, EventEmitter, Inject, Output} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {v4 as uuidv4} from 'uuid';
-import {EvalService} from '../../../../core/services/eval.service';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { v4 as uuidv4 } from 'uuid';
+import { EvalService } from '../../../../core/services/eval.service';
 
 @Component({
   selector: 'app-new-eval-set-dialog-component',
@@ -30,8 +30,8 @@ export class NewEvalSetDialogComponentComponent {
 
   constructor(
     private evalService: EvalService,
-    @Inject(MAT_DIALOG_DATA) public data: {appName: string},
-    public dialogRef: MatDialogRef<NewEvalSetDialogComponentComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { appName: string },
+    public dialogRef: MatDialogRef<NewEvalSetDialogComponentComponent>
   ) {}
 
   createNewEvalSet() {
