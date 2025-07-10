@@ -89,6 +89,8 @@ import {
 import { SessionTabComponent } from '../session-tab/session-tab.component';
 import { ViewImageDialogComponent } from '../view-image-dialog/view-image-dialog.component';
 
+const ROOT_AGENT = 'root_agent';
+
 function fixBase64String(base64: string): string {
   // Replace URL-safe characters if they exist
   base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
@@ -170,6 +172,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   showSidePanel = true;
   useSse = false;
   currentSessionState = {};
+  root_agent = ROOT_AGENT;
+
   private readonly messagesSubject = new BehaviorSubject<any[]>([]);
   private readonly streamingTextMessageSubject = new BehaviorSubject<
     any | null
@@ -643,7 +647,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     invocationIndex?: number,
     additionalIndeces?: any
   ) {
-    if (!!e.author) {
+    if (e?.author) {
       this.createAgentIconColorClass(e.author);
     }
 
@@ -932,12 +936,14 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     const key = this.messages[i].eventId;
     const selectedEvent = this.eventData.get(key);
 
-    return selectedEvent?.author ?? this.selectedAppControl.value;
+    return selectedEvent?.author ?? ROOT_AGENT;
   }
 
   customIconColorClass(i: number) {
     const agentName = this.getAgentNameFromEvent(i);
-    return `custom-icon-color-${stc(agentName).replace('#', '')}`;
+    return agentName !== ROOT_AGENT
+      ? `custom-icon-color-${stc(agentName).replace('#', '')}`
+      : '';
   }
 
   createAgentIconColorClass(agentName: string) {
