@@ -55,7 +55,7 @@ export class ResizableDrawerDirective implements AfterViewInit {
     this.renderer.listen(this.resizeHandle, 'mousedown', (event) =>
       this.onResizeHandleMouseDown(event)
     );
-    document.documentElement.style.setProperty('--side-drawer-width', '570px');
+    document.documentElement.style.setProperty('--side-drawer-width', '24vw');
 
     this.renderer.setStyle(
       this.el.nativeElement,

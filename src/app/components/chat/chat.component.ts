@@ -580,6 +580,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.streamingTextMessage.text += newChunk;
         this.streamingTextMessageSubject.next(this.streamingTextMessage);
       }
+    } else if (part.functionCall || part.functionResponse) {
+      this.storeEvents(part, chunkJson, index);
+      return;
     } else if (!part.thought) {
       this.isModelThinkingSubject.next(false);
       this.storeEvents(part, chunkJson, index);
@@ -735,15 +738,17 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       message.eventId = e?.id;
       this.eventMessageIndexArray[index] = part.text;
-    } else if (part.functionCall) {
-      message.functionCall = part.functionCall;
-      message.eventId = e?.id;
-      this.eventMessageIndexArray[index] = part.functionCall;
-    } else if (part.functionResponse) {
-      message.functionResponse = part.functionResponse;
-      message.eventId = e?.id;
-      this.eventMessageIndexArray[index] = part.functionResponse;
-    } else if (part.executableCode) {
+    }
+    // else if (part.functionCall) {
+    //   message.functionCall = part.functionCall;
+    //   message.eventId = e?.id;
+    //   this.eventMessageIndexArray[index] = part.functionCall;
+    // } else if (part.functionResponse) {
+    //   message.functionResponse = part.functionResponse;
+    //   message.eventId = e?.id;
+    //   this.eventMessageIndexArray[index] = part.functionResponse;
+    // }
+    else if (part.executableCode) {
       message.executableCode = part.executableCode;
       this.eventMessageIndexArray[index] = part.executableCode;
     } else if (part.codeExecutionResult) {

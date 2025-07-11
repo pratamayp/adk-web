@@ -51,7 +51,7 @@
         </div>
       </div>
     </div>
-    <div class="app-select-container">
+    <!-- <div class="app-select-container">
       <mat-select
         class="app-select"
         (selectionChange)="onAppSelection($event)"
@@ -71,10 +71,13 @@
         >
         }
       </mat-select>
-    </div>
+    </div> -->
     @if (appName != "" && showSidePanel) {
     <div class="tabs-container">
-      <mat-tab-group (selectedTabChange)="handleTabChange($event)">
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad a doloremque
+      et deleniti delectus ullam ea minus error, nobis velit iusto qui magni
+      laudantium sunt modi beatae hic quos nostrum.
+      <!-- <mat-tab-group (selectedTabChange)="handleTabChange($event)">
         <mat-tab class="tabs-header">
           <ng-template mat-tab-label>
             <span class="tab-label">Trace</span>
@@ -134,7 +137,7 @@
           ></app-eval-tab>
         </mat-tab>
         }
-      </mat-tab-group>
+      </mat-tab-group> -->
     </div>
     } @if (this.selectedEvent && showSidePanel) {
     <div class="details-panel-container">
@@ -566,7 +569,8 @@
             </div>
             }
           </mat-card>
-          } @if (message.functionCall) {
+          }
+          <!-- @if (message.functionCall) {
           <button
             mat-stroked-button
             [ngClass]="{
@@ -590,7 +594,7 @@
             <mat-icon>check</mat-icon>
             {{ message.functionResponse.name }}
           </button>
-          }
+          } -->
           <div
             [ngClass]="{
               'eval-pass': message.evalStatus === 1,
