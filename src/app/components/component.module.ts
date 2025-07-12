@@ -67,7 +67,7 @@ import { JsonEditorComponent } from './json-editor/json-editor.component';
 import { PendingEventDialogComponent } from './pending-event-dialog/pending-event-dialog.component';
 import { DeleteSessionDialogComponent } from './session-tab/delete-session-dialog/delete-session-dialog.component';
 import { SessionTabComponent } from './session-tab/session-tab.component';
-import { StateTabComponent } from './state-tab/state-tab.component';
+// import { StateTabComponent } from './state-tab/state-tab.component';
 import { TraceEventComponent } from './trace-tab/trace-event/trace-event.component';
 import { TraceTabComponent } from './trace-tab/trace-tab.component';
 import { TraceTreeComponent } from './trace-tab/trace-tree/trace-tree.component';
@@ -83,7 +83,7 @@ const COMPONENTS = [
   // AddEvalSessionDialogComponent,
   // ArtifactTabComponent,
   DeleteSessionDialogComponent,
-  StateTabComponent,
+  // StateTabComponent,
   // TraceChartComponent,
   ViewImageDialogComponent,
   // RunEvalConfigDialogComponent,
