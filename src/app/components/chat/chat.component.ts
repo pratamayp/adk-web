@@ -67,7 +67,7 @@ import {
   getMediaTypeFromMimetype,
   MediaType,
   openBase64InNewTab,
-} from '../../services/artifact/artifact.service';
+} from '../../core/services/artifact.service';
 
 const BIDI_STREAMING_RESTART_WARNING =
   'Restarting bidirectional streaming is not currently supported. Please refresh the page or start a new session.';

@@ -31,7 +31,7 @@ import { AgentService } from './core/services/agent.service';
 import { ArtifactService } from './core/services/artifact.service';
 import { AudioService } from './core/services/audio.service';
 import { DownloadService } from './core/services/download.service';
-import { EvalService } from './core/services/eval.service';
+// import { EvalService } from './core/services/eval.service';
 import { EventService } from './core/services/event.service';
 import { SessionService } from './core/services/session.service';
 import { VideoService } from './core/services/video.service';
@@ -58,7 +58,7 @@ import { TraceService } from './core/services/trace.service';
     AudioService,
     VideoService,
     EventService,
-    EvalService,
+    // EvalService,
     ArtifactService,
     DownloadService,
     TraceService,

@@ -56,11 +56,11 @@ import { ResizableDrawerDirective } from '../directives/resizable-drawer.directi
 // import { ArtifactTabComponent } from './artifact-tab/artifact-tab.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { ChatComponent } from './chat/chat.component';
-import { AddEvalSessionDialogComponent } from './eval-tab/add-eval-session-dialog/add-eval-session-dialog/add-eval-session-dialog.component';
-import { EditFunctionArgsDialogComponent } from './eval-tab/edit-function-args-dialog/edit-function-args-dialog.component';
-import { EvalTabComponent } from './eval-tab/eval-tab.component';
-import { NewEvalSetDialogComponentComponent } from './eval-tab/new-eval-set-dialog/new-eval-set-dialog-component/new-eval-set-dialog-component.component';
-import { RunEvalConfigDialogComponent } from './eval-tab/run-eval-config-dialog/run-eval-config-dialog.component';
+// import { AddEvalSessionDialogComponent } from './eval-tab/add-eval-session-dialog/add-eval-session-dialog/add-eval-session-dialog.component';
+// import { EditFunctionArgsDialogComponent } from './eval-tab/edit-function-args-dialog/edit-function-args-dialog.component';
+// import { EvalTabComponent } from './eval-tab/eval-tab.component';
+// import { NewEvalSetDialogComponentComponent } from './eval-tab/new-eval-set-dialog/new-eval-set-dialog-component/new-eval-set-dialog-component.component';
+// import { RunEvalConfigDialogComponent } from './eval-tab/run-eval-config-dialog/run-eval-config-dialog.component';
 import { EventTabComponent } from './event-tab/event-tab.component';
 import { TraceChartComponent } from './event-tab/trace-chart/trace-chart.component';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
@@ -78,16 +78,16 @@ const COMPONENTS = [
   PendingEventDialogComponent,
   EventTabComponent,
   SessionTabComponent,
-  EvalTabComponent,
-  NewEvalSetDialogComponentComponent,
-  AddEvalSessionDialogComponent,
+  // EvalTabComponent,
+  // NewEvalSetDialogComponentComponent,
+  // AddEvalSessionDialogComponent,
   // ArtifactTabComponent,
   DeleteSessionDialogComponent,
   StateTabComponent,
   TraceChartComponent,
   ViewImageDialogComponent,
-  RunEvalConfigDialogComponent,
-  EditFunctionArgsDialogComponent,
+  // RunEvalConfigDialogComponent,
+  // EditFunctionArgsDialogComponent,
   AudioPlayerComponent,
   ResizableDrawerDirective,
   ResizableBottomDirective,
