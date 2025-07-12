@@ -61,8 +61,8 @@ import { ChatComponent } from './chat/chat.component';
 // import { EvalTabComponent } from './eval-tab/eval-tab.component';
 // import { NewEvalSetDialogComponentComponent } from './eval-tab/new-eval-set-dialog/new-eval-set-dialog-component/new-eval-set-dialog-component.component';
 // import { RunEvalConfigDialogComponent } from './eval-tab/run-eval-config-dialog/run-eval-config-dialog.component';
-import { EventTabComponent } from './event-tab/event-tab.component';
-import { TraceChartComponent } from './event-tab/trace-chart/trace-chart.component';
+// import { EventTabComponent } from './event-tab/event-tab.component';
+// import { TraceChartComponent } from './event-tab/trace-chart/trace-chart.component';
 import { JsonEditorComponent } from './json-editor/json-editor.component';
 import { PendingEventDialogComponent } from './pending-event-dialog/pending-event-dialog.component';
 import { DeleteSessionDialogComponent } from './session-tab/delete-session-dialog/delete-session-dialog.component';
@@ -76,7 +76,7 @@ import { ViewImageDialogComponent } from './view-image-dialog/view-image-dialog.
 const COMPONENTS = [
   ChatComponent,
   PendingEventDialogComponent,
-  EventTabComponent,
+  // EventTabComponent,
   SessionTabComponent,
   // EvalTabComponent,
   // NewEvalSetDialogComponentComponent,
@@ -84,7 +84,7 @@ const COMPONENTS = [
   // ArtifactTabComponent,
   DeleteSessionDialogComponent,
   StateTabComponent,
-  TraceChartComponent,
+  // TraceChartComponent,
   ViewImageDialogComponent,
   // RunEvalConfigDialogComponent,
   // EditFunctionArgsDialogComponent,
