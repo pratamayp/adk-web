@@ -53,7 +53,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { ResizableBottomDirective } from '../directives/resizable-bottom.directive';
 import { ResizableDrawerDirective } from '../directives/resizable-drawer.directive';
 
-import { ArtifactTabComponent } from './artifact-tab/artifact-tab.component';
+// import { ArtifactTabComponent } from './artifact-tab/artifact-tab.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { ChatComponent } from './chat/chat.component';
 import { AddEvalSessionDialogComponent } from './eval-tab/add-eval-session-dialog/add-eval-session-dialog/add-eval-session-dialog.component';
@@ -81,7 +81,7 @@ const COMPONENTS = [
   EvalTabComponent,
   NewEvalSetDialogComponentComponent,
   AddEvalSessionDialogComponent,
-  ArtifactTabComponent,
+  // ArtifactTabComponent,
   DeleteSessionDialogComponent,
   StateTabComponent,
   TraceChartComponent,

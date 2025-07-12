@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,24 +23,18 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
-  Inject,
   inject,
   OnDestroy,
   OnInit,
-  Renderer2,
-  signal,
   ViewChild,
   WritableSignal,
+  signal,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { instance } from '@viz-js/viz';
 import {
   BehaviorSubject,
   catchError,
@@ -55,71 +49,25 @@ import {
   take,
   tap,
 } from 'rxjs';
-import stc from 'string-to-color';
 
 import { URLUtil } from '../../../utils/url-util';
 import { AgentRunRequest } from '../../core/models/AgentRunRequest';
 import { Session } from '../../core/models/Session';
 import { AgentService } from '../../core/services/agent.service';
-import { ArtifactService } from '../../core/services/artifact.service';
 import { AudioService } from '../../core/services/audio.service';
-import { DownloadService } from '../../core/services/download.service';
-import { EvalService } from '../../core/services/eval.service';
-import { EventService } from '../../core/services/event.service';
 import { FeatureFlagService } from '../../core/services/feature-flag.service';
 import { SessionService } from '../../core/services/session.service';
-import { TraceService } from '../../core/services/trace.service';
 import { VideoService } from '../../core/services/video.service';
+
+import { ViewImageDialogComponent } from '../view-image-dialog/view-image-dialog.component';
 import { WebSocketService } from '../../core/services/websocket.service';
-import { ResizableDrawerDirective } from '../../directives/resizable-drawer.directive';
+import { DeleteSessionDialogComponent } from '../session-tab/delete-session-dialog/delete-session-dialog.component';
+import { SessionTabComponent } from '../session-tab/session-tab.component';
 import {
   getMediaTypeFromMimetype,
   MediaType,
   openBase64InNewTab,
-} from '../artifact-tab/artifact-tab.component';
-import { AudioPlayerComponent } from '../audio-player/audio-player.component';
-import { EditFunctionArgsDialogComponent } from '../eval-tab/edit-function-args-dialog/edit-function-args-dialog.component';
-import { EvalCase, EvalTabComponent } from '../eval-tab/eval-tab.component';
-import { EventTabComponent } from '../event-tab/event-tab.component';
-import { PendingEventDialogComponent } from '../pending-event-dialog/pending-event-dialog.component';
-import {
-  DeleteSessionDialogComponent,
-  DeleteSessionDialogData,
-} from '../session-tab/delete-session-dialog/delete-session-dialog.component';
-import { SessionTabComponent } from '../session-tab/session-tab.component';
-import { ViewImageDialogComponent } from '../view-image-dialog/view-image-dialog.component';
-
-const ROOT_AGENT = 'root_agent';
-
-function fixBase64String(base64: string): string {
-  // Replace URL-safe characters if they exist
-  base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
-
-  // Fix base64 padding
-  while (base64.length % 4 !== 0) {
-    base64 += '=';
-  }
-
-  return base64;
-}
-
-class CustomPaginatorIntl extends MatPaginatorIntl {
-  override nextPageLabel = 'Next Event';
-  override previousPageLabel = 'Previous Event';
-  override firstPageLabel = 'First Event';
-  override lastPageLabel = 'Last Event';
-
-  override getRangeLabel = (page: number, pageSize: number, length: number) => {
-    if (length === 0) {
-      return `Event 0 of ${length}`;
-    }
-
-    length = Math.max(length, 0);
-    const startIndex = page * pageSize;
-
-    return `Event ${startIndex + 1} of ${length}`;
-  };
-}
+} from '../../services/artifact/artifact.service';
 
 const BIDI_STREAMING_RESTART_WARNING =
   'Restarting bidirectional streaming is not currently supported. Please refresh the page or start a new session.';
@@ -130,49 +78,31 @@ const BIDI_STREAMING_RESTART_WARNING =
   styleUrl: './chat.component.scss',
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: MatPaginatorIntl, useClass: CustomPaginatorIntl }],
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('videoContainer', { read: ElementRef })
   videoContainer!: ElementRef;
   @ViewChild('sideDrawer') sideDrawer!: MatDrawer;
-  @ViewChild(EventTabComponent) eventTabComponent!: EventTabComponent;
   @ViewChild(SessionTabComponent) sessionTab!: SessionTabComponent;
-  @ViewChild(EvalTabComponent) evalTab!: EvalTabComponent;
   @ViewChild('autoScroll') private scrollContainer!: ElementRef;
-  @ViewChild('messageTextarea') private textarea: ElementRef | undefined;
-  @ViewChild('bottomPanel') bottomPanelRef!: ElementRef;
+
   private _snackBar = inject(MatSnackBar);
-  shouldShowEvalTab = signal(true);
-  enableSseIndicator = signal(false);
-  isChatMode = signal(true);
-  isEvalCaseEditing = signal(false);
-  hasEvalCaseChanged = signal(false);
-  isEvalEditMode = signal(false);
+
   videoElement!: HTMLVideoElement;
   currentMessage = '';
   messages: any[] = [];
   lastTextChunk: string = '';
   streamingTextMessage: any | null = null;
   latestThought: string = '';
-  artifacts: any[] = [];
   userInput: string = '';
-  userEditEvalCaseMessage: string = '';
   userId = 'user';
   appName = '';
   sessionId = ``;
-  evalCase: EvalCase | null = null;
-  updatedEvalCase: EvalCase | null = null;
-  evalSetId = '';
   isAudioRecording = false;
   isVideoRecording = false;
-  longRunningEvents: any[] = [];
-  functionCallEventId = '';
-  redirectUri = URLUtil.getBaseUrlWithoutPath();
   showSidePanel = true;
   useSse = false;
   currentSessionState = {};
-  root_agent = ROOT_AGENT;
 
   private readonly messagesSubject = new BehaviorSubject<any[]>([]);
   private readonly streamingTextMessageSubject = new BehaviorSubject<
@@ -181,31 +111,15 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly scrollInterruptedSubject = new BehaviorSubject(true);
   private readonly isModelThinkingSubject = new BehaviorSubject(false);
 
-  // TODO: Remove this once backend supports restarting bidi streaming.
   sessionHasUsedBidi = new Set<string>();
-
-  eventData = new Map<string, any>();
-  traceData: any[] = [];
-  eventMessageIndexArray: any[] = [];
-  renderedEventGraph: SafeHtml | undefined;
-  rawSvgString: string | null = null;
-
-  selectedEvent: any = undefined;
-  selectedEventIndex: any = undefined;
-  llmRequest: any = undefined;
-  llmResponse: any = undefined;
-  llmRequestKey = 'gcp.vertex.agent.llm_request';
-  llmResponseKey = 'gcp.vertex.agent.llm_response';
 
   getMediaTypeFromMimetype = getMediaTypeFromMimetype;
 
   selectedFiles: { file: File; url: string }[] = [];
-  private previousMessageCount = 0;
 
   protected openBase64InNewTab = openBase64InNewTab;
   protected MediaType = MediaType;
 
-  // Sync query params with value from agent picker.
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   protected readonly selectedAppControl = new FormControl<string>('', {
@@ -214,7 +128,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
-  // Load apps
   private readonly agentService = inject(AgentService);
   protected isLoadingApps: WritableSignal<boolean> = signal(false);
   protected loadingError: WritableSignal<string> = signal('');
@@ -246,38 +159,16 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   );
 
   private readonly featureFlagService = inject(FeatureFlagService);
-
-  // Import session
-  importSessionEnabledObs: Observable<boolean> =
-    this.featureFlagService.isImportSessionEnabled();
-
-  // Edit eval tool use
-  isEditFunctionArgsEnabledObs =
-    this.featureFlagService.isEditFunctionArgsEnabled();
-
-  // Session url
   isSessionUrlEnabledObs = this.featureFlagService.isSessionUrlEnabled();
 
-  // Trace detail
-  bottomPanelVisible = false;
-  hoveredEventMessageIndices: number[] = [];
-
   constructor(
-    private sanitizer: DomSanitizer,
     private sessionService: SessionService,
-    private artifactService: ArtifactService,
     private audioService: AudioService,
     private webSocketService: WebSocketService,
     private videoService: VideoService,
     private dialog: MatDialog,
-    private eventService: EventService,
     private route: ActivatedRoute,
-    private downloadService: DownloadService,
-    private evalService: EvalService,
-    private traceService: TraceService,
-    private location: Location,
-    private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -290,16 +181,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       this.openSnackBar(error, 'OK');
     });
 
-    // OAuth HACK: Opens oauth poup in a new window. If the oauth callback
-    // is successful, the new window acquires the auth token, state and
-    // optionally the scope. Send this back to the main window.
     const location = new URL(window.location.href);
     const searchParams = location.searchParams;
     if (searchParams.has('code')) {
       const authResponseUrl = window.location.href;
-      // Send token to the main window
       window.opener?.postMessage({ authResponseUrl }, window.origin);
-      // Close the popup
       window.close();
     }
 
@@ -336,19 +222,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         }, 100);
       }
     });
-
-    this.traceService.selectedTraceRow$.subscribe((node) => {
-      const eventId = node?.attributes['gcp.vertex.agent.event_id'];
-      if (eventId && this.eventData.has(eventId)) {
-        this.bottomPanelVisible = true;
-      } else {
-        this.bottomPanelVisible = false;
-      }
-    });
-
-    this.traceService.hoveredMessageIndicies$.subscribe(
-      (i) => (this.hoveredEventMessageIndices = i)
-    );
   }
 
   ngAfterViewInit() {
@@ -374,7 +247,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (!sessionUrlEnabled || !sessionUrl) {
           this.createSessionAndReset();
-
           return;
         }
 
@@ -404,12 +276,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private createSessionAndReset() {
     this.createSession();
-    this.eventData = new Map<string, any>();
-    this.eventMessageIndexArray = [];
     this.messages = [];
-    this.artifacts = [];
     this.userInput = '';
-    this.longRunningEvents = [];
   }
 
   createSession() {
@@ -443,19 +311,16 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.userInput.trim() && this.selectedFiles.length <= 0) return;
 
     if (event instanceof KeyboardEvent) {
-      // support for japanese IME
       if (event.isComposing) {
         return;
       }
     }
 
-    // Add user message
     if (!!this.userInput.trim()) {
       this.messages.push({ role: 'user', text: this.userInput });
       this.messagesSubject.next(this.messages);
     }
 
-    // Add user message attachments
     if (this.selectedFiles.length > 0) {
       const messageAttachments = this.selectedFiles.map((file) => ({
         file: file.file,
@@ -476,7 +341,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       streaming: this.useSse,
     };
     this.selectedFiles = [];
-    let index = this.eventMessageIndexArray.length - 1;
+    let index = this.messages.length - 1;
     this.streamingTextMessage = null;
     this.agentService.runSse(req).subscribe({
       next: async (chunk) => {
@@ -491,9 +356,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (chunkJson.content) {
           for (let part of chunkJson.content.parts) {
-            index += 1;
             this.processPart(chunkJson, part, index);
-            this.traceService.setEventData(this.eventData);
           }
         }
         this.changeDetectorRef.detectChanges();
@@ -502,46 +365,28 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       complete: () => {
         this.streamingTextMessage = null;
         this.sessionTab.reloadSession(this.sessionId);
-        this.eventService
-          .getTrace(this.sessionId)
-          .pipe(
-            catchError((error) => {
-              if (error.status === 404) {
-                return of(null);
-              }
-              return of([]);
-            })
-          )
-          .subscribe((res) => {
-            this.traceData = res;
-            this.changeDetectorRef.detectChanges();
-          });
-        this.traceService.setMessages(this.messages);
       },
     });
-    // Clear input
     this.userInput = '';
     this.changeDetectorRef.detectChanges();
   }
 
   private processPart(chunkJson: any, part: any, index: number) {
-    const renderedContent =
-      chunkJson.groundingMetadata?.searchEntryPoint?.renderedContent;
-
     if (part.text) {
       this.isModelThinkingSubject.next(false);
       const newChunk = part.text;
       if (part.thought) {
         if (newChunk !== this.latestThought) {
-          this.storeEvents(part, chunkJson, index);
-          let thoughtMessage = {
-            role: 'bot',
-            text: this.processThoughtText(newChunk),
-            thought: true,
-            eventId: chunkJson.id,
-          };
-
-          this.insertMessageBeforeLoadingMessage(thoughtMessage);
+          const processedText = this.processThoughtText(newChunk);
+          if (processedText) {
+            // Only show thought if it has content
+            let thoughtMessage = {
+              role: 'bot',
+              text: processedText,
+              thought: true,
+            };
+            this.insertMessageBeforeLoadingMessage(thoughtMessage);
+          }
         }
         this.latestThought = newChunk;
       } else if (!this.streamingTextMessage) {
@@ -549,43 +394,24 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
           role: 'bot',
           text: this.processThoughtText(newChunk),
           thought: part.thought ? true : false,
-          eventId: chunkJson.id,
         };
-
-        if (renderedContent) {
-          this.streamingTextMessage.renderedContent =
-            chunkJson.groundingMetadata.searchEntryPoint.renderedContent;
-        }
 
         this.insertMessageBeforeLoadingMessage(this.streamingTextMessage);
 
         if (!this.useSse) {
-          this.storeEvents(part, chunkJson, index);
-          this.eventMessageIndexArray[index] = newChunk;
           this.streamingTextMessage = null;
           return;
         }
       } else {
-        if (renderedContent) {
-          this.streamingTextMessage.renderedContent =
-            chunkJson.groundingMetadata.searchEntryPoint.renderedContent;
-        }
-
         if (newChunk == this.streamingTextMessage.text) {
-          this.storeEvents(part, chunkJson, index);
-          this.eventMessageIndexArray[index] = newChunk;
           this.streamingTextMessage = null;
           return;
         }
         this.streamingTextMessage.text += newChunk;
         this.streamingTextMessageSubject.next(this.streamingTextMessage);
       }
-    } else if (part.functionCall || part.functionResponse) {
-      this.storeEvents(part, chunkJson, index);
-      return;
     } else if (!part.thought) {
       this.isModelThinkingSubject.next(false);
-      this.storeEvents(part, chunkJson, index);
       this.storeMessage(
         part,
         chunkJson,
@@ -626,94 +452,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         resolve(base64Data);
       };
       reader.onerror = reject;
-      reader.readAsDataURL(file); // Read as raw bytes
+      reader.readAsDataURL(file);
     });
   }
 
-  private updateRedirectUri(urlString: string, newRedirectUri: string): string {
-    try {
-      const url = new URL(urlString);
-      const searchParams = url.searchParams;
-      searchParams.set('redirect_uri', newRedirectUri);
-      return url.toString();
-    } catch (error) {
-      console.warn('Failed to update redirect URI: ', error);
-      return urlString;
-    }
-  }
-
-  private storeMessage(
-    part: any,
-    e: any,
-    index: number,
-    role: string,
-    invocationIndex?: number,
-    additionalIndeces?: any
-  ) {
-    if (e?.author) {
-      this.createAgentIconColorClass(e.author);
-    }
-
-    if (e?.longRunningToolIds && e.longRunningToolIds.length > 0) {
-      this.getAsyncFunctionsFromParts(e.longRunningToolIds, e.content.parts);
-      const func = this.longRunningEvents[0];
-      if (
-        func.args.authConfig &&
-        func.args.authConfig.exchangedAuthCredential &&
-        func.args.authConfig.exchangedAuthCredential.oauth2
-      ) {
-        // for OAuth
-        const authUri =
-          func.args.authConfig.exchangedAuthCredential.oauth2.authUri;
-        const updatedAuthUri = this.updateRedirectUri(
-          authUri,
-          this.redirectUri
-        );
-        this.openOAuthPopup(updatedAuthUri)
-          .then((authResponseUrl) => {
-            this.functionCallEventId = e.id;
-            this.sendOAuthResponse(func, authResponseUrl, this.redirectUri);
-          })
-          .catch((error) => {
-            console.error('OAuth Error:', error);
-          });
-      } else {
-        this.functionCallEventId = e.id;
-      }
-    }
-    if (e?.actions && e.actions.artifactDelta) {
-      for (const key in e.actions.artifactDelta) {
-        if (e.actions.artifactDelta.hasOwnProperty(key)) {
-          this.renderArtifact(key, e.actions.artifactDelta[key]);
-        }
-      }
-    }
-
-    if (e?.evalStatus) {
-      this.isChatMode.set(false);
-    }
-
-    let message: any = {
-      role,
-      evalStatus: e?.evalStatus,
-      failedMetric: e?.failedMetric,
-      evalScore: e?.evalScore,
-      evalThreshold: e?.evalThreshold,
-      actualInvocationToolUses: e?.actualInvocationToolUses,
-      expectedInvocationToolUses: e?.expectedInvocationToolUses,
-      actualFinalResponse: e?.actualFinalResponse,
-      expectedFinalResponse: e?.expectedFinalResponse,
-      invocationIndex:
-        invocationIndex !== undefined ? invocationIndex : undefined,
-      finalResponsePartIndex:
-        additionalIndeces?.finalResponsePartIndex !== undefined
-          ? additionalIndeces.finalResponsePartIndex
-          : undefined,
-      toolUseIndex:
-        additionalIndeces?.toolUseIndex !== undefined
-          ? additionalIndeces.toolUseIndex
-          : undefined,
-    };
+  private storeMessage(part: any, e: any, index: number, role: string) {
+    let message: any = { role };
     if (part.inlineData) {
       const base64Data = this.formatBase64Data(
         part.inlineData.data,
@@ -724,46 +468,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         data: base64Data,
         mimeType: part.inlineData.mimeType,
       };
-      this.eventMessageIndexArray[index] = part.inlineData;
     } else if (part.text) {
       message.text = part.text;
       message.thought = part.thought ? true : false;
-      if (
-        e?.groundingMetadata &&
-        e.groundingMetadata.searchEntryPoint &&
-        e.groundingMetadata.searchEntryPoint.renderedContent
-      ) {
-        message.renderedContent =
-          e.groundingMetadata.searchEntryPoint.renderedContent;
-      }
-      message.eventId = e?.id;
-      this.eventMessageIndexArray[index] = part.text;
-    }
-    // else if (part.functionCall) {
-    //   message.functionCall = part.functionCall;
-    //   message.eventId = e?.id;
-    //   this.eventMessageIndexArray[index] = part.functionCall;
-    // } else if (part.functionResponse) {
-    //   message.functionResponse = part.functionResponse;
-    //   message.eventId = e?.id;
-    //   this.eventMessageIndexArray[index] = part.functionResponse;
-    // }
-    else if (part.executableCode) {
-      message.executableCode = part.executableCode;
-      this.eventMessageIndexArray[index] = part.executableCode;
-    } else if (part.codeExecutionResult) {
-      message.codeExecutionResult = part.codeExecutionResult;
-      this.eventMessageIndexArray[index] = part.codeExecutionResult;
-      if (e.actions && e.actions.artifact_delta) {
-        for (const key in e.actions.artifact_delta) {
-          if (e.actions.artifact_delta.hasOwnProperty(key)) {
-            this.renderArtifact(key, e.actions.artifact_delta[key]);
-          }
-        }
-      }
     }
 
-    if (Object.keys(part).length > 0) {
+    // Only insert the message if it has renderable content.
+    if (message.text || message.inlineData) {
       this.insertMessageBeforeLoadingMessage(message);
     }
   }
@@ -779,228 +490,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private formatBase64Data(data: string, mimeType: string) {
-    const fixedBase64Data = fixBase64String(data);
-    return `data:${mimeType};base64,${fixedBase64Data}`;
-  }
-
-  private renderArtifact(artifactId: string, versionId: string) {
-    // Add a placeholder message for the artifact
-    // Feed the placeholder with the artifact data after it's fetched
-    let message = {
-      role: 'bot',
-      inlineData: {
-        data: '',
-        mimeType: 'image/png',
-      },
-    };
-    this.insertMessageBeforeLoadingMessage(message);
-
-    const currentIndex = this.messages.length - 2;
-
-    this.artifactService
-      .getArtifactVersion(
-        this.userId,
-        this.appName,
-        this.sessionId,
-        artifactId,
-        versionId
-      )
-      .subscribe((res) => {
-        const mimeType = res.inlineData.mimeType;
-        const base64Data = this.formatBase64Data(res.inlineData.data, mimeType);
-
-        const mediaType = getMediaTypeFromMimetype(mimeType);
-
-        let inlineData = {
-          name: this.createDefaultArtifactName(mimeType),
-          data: base64Data,
-          mimeType: mimeType,
-          mediaType,
-        };
-
-        this.messages[currentIndex] = {
-          role: 'bot',
-          inlineData,
-        };
-
-        // To trigger ngOnChanges in the artifact tab component
-        this.artifacts = [
-          ...this.artifacts,
-          {
-            id: artifactId,
-            data: base64Data,
-            mimeType,
-            versionId,
-            mediaType: getMediaTypeFromMimetype(mimeType),
-          },
-        ];
-      });
-  }
-
-  private storeEvents(part: any, e: any, index: number) {
-    let title = '';
-    if (part.text) {
-      title += 'text:' + part.text;
-    } else if (part.functionCall) {
-      title += 'functionCall:' + part.functionCall.name;
-    } else if (part.functionResponse) {
-      title += 'functionResponse:' + part.functionResponse.name;
-    } else if (part.executableCode) {
-      title += 'executableCode:' + part.executableCode.code.slice(0, 10);
-    } else if (part.codeExecutionResult) {
-      title += 'codeExecutionResult:' + part.codeExecutionResult.outcome;
-    }
-    e.title = title;
-
-    this.eventData.set(e.id, e);
-    this.eventData = new Map(this.eventData);
-  }
-
-  private sendOAuthResponse(
-    func: any,
-    authResponseUrl: string,
-    redirectUri: string
-  ) {
-    this.longRunningEvents.pop();
-    const authResponse: AgentRunRequest = {
-      appName: this.appName,
-      userId: this.userId,
-      sessionId: this.sessionId,
-      newMessage: {
-        role: 'user',
-        parts: [],
-      },
-    };
-
-    var authConfig = structuredClone(func.args.authConfig);
-    authConfig.exchangedAuthCredential.oauth2.authResponseUri = authResponseUrl;
-    authConfig.exchangedAuthCredential.oauth2.redirectUri = redirectUri;
-
-    authResponse.functionCallEventId = this.functionCallEventId;
-    authResponse.newMessage.parts.push({
-      function_response: {
-        id: func.id,
-        name: func.name,
-        response: authConfig,
-      },
-    });
-
-    let response: any[] = [];
-    this.agentService.runSse(authResponse).subscribe({
-      next: async (chunk) => {
-        const chunkJson = JSON.parse(chunk);
-        response.push(chunkJson);
-      },
-      error: (err) => console.error('SSE error:', err),
-      complete: () => {
-        this.processRunSseResponse(response);
-      },
-    });
-  }
-
-  private processRunSseResponse(response: any) {
-    let index = this.eventMessageIndexArray.length - 1;
-    for (const e of response) {
-      if (e.content) {
-        for (let part of e.content.parts) {
-          index += 1;
-          this.processPart(e, part, index);
-        }
-      }
-    }
-  }
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(PendingEventDialogComponent, {
-      width: '600px',
-      data: {
-        event: this.longRunningEvents[0],
-        appName: this.appName,
-        userId: this.userId,
-        sessionId: this.sessionId,
-        functionCallEventId: this.functionCallEventId,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((t) => {
-      if (t) {
-        this.removeFinishedLongRunningEvents(t.events);
-        this.processRunSseResponse(t.response);
-      }
-    });
-  }
-
-  removeFinishedLongRunningEvents(finishedEvents: any[]) {
-    const idsToExclude = new Set(finishedEvents.map((obj: any) => obj.id));
-    this.longRunningEvents = this.longRunningEvents.filter(
-      (obj) => !idsToExclude.has(obj.id)
-    );
-  }
-
-  getAgentNameFromEvent(i: number) {
-    const key = this.messages[i].eventId;
-    const selectedEvent = this.eventData.get(key);
-
-    return selectedEvent?.author ?? ROOT_AGENT;
-  }
-
-  customIconColorClass(i: number) {
-    const agentName = this.getAgentNameFromEvent(i);
-    return agentName !== ROOT_AGENT
-      ? `custom-icon-color-${stc(agentName).replace('#', '')}`
-      : '';
-  }
-
-  createAgentIconColorClass(agentName: string) {
-    const agentIconColor = stc(agentName);
-
-    const agentIconColorClass = `custom-icon-color-${agentIconColor.replace(
-      '#',
-      ''
-    )}`;
-
-    // Inject the style for this unique class
-    this.injectCustomIconColorStyle(agentIconColorClass, agentIconColor);
-  }
-
-  clickEvent(i: number) {
-    const key = this.messages[i].eventId;
-
-    this.sideDrawer.open();
-    this.showSidePanel = true;
-    this.selectedEvent = this.eventData.get(key);
-    this.selectedEventIndex = this.getIndexOfKeyInMap(key);
-
-    this.eventService.getEventTrace(this.selectedEvent.id).subscribe((res) => {
-      this.llmRequest = JSON.parse(res[this.llmRequestKey]);
-      this.llmResponse = JSON.parse(res[this.llmResponseKey]);
-    });
-
-    this.eventService
-      .getEvent(
-        this.userId,
-        this.appName,
-        this.sessionId,
-        this.selectedEvent.id
-      )
-      .subscribe(async (res) => {
-        if (!res.dotSrc) {
-          this.renderedEventGraph = undefined;
-          return;
-        }
-        const graphSrc = res.dotSrc;
-        const viz = await instance();
-        const svg = viz.renderString(graphSrc, {
-          format: 'svg',
-          engine: 'dot',
-        });
-        this.rawSvgString = svg;
-        this.renderedEventGraph = this.sanitizer.bypassSecurityTrustHtml(svg);
-      });
-  }
-
-  userMessagesLength(i: number) {
-    return this.messages.slice(0, i).filter((m) => m.role == 'user').length;
+    return `data:${mimeType};base64,${data}`;
   }
 
   ngOnDestroy(): void {
@@ -1016,9 +506,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       this.stopVideoRecording();
       this.isVideoRecording = false;
     }
-    this.evalTab?.resetEvalResults();
-    this.traceData = [];
-    this.bottomPanelVisible = false;
   }
 
   toggleAudioRecording() {
@@ -1086,42 +573,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isVideoRecording = false;
   }
 
-  private getAsyncFunctionsFromParts(pendingIds: any[], parts: any[]) {
-    for (const part of parts) {
-      if (part.functionCall && pendingIds.includes(part.functionCall.id)) {
-        this.longRunningEvents.push(part.functionCall);
-      }
-    }
-  }
-
-  private openOAuthPopup(url: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      // Open OAuth popup
-      const popup = window.open(url, 'oauthPopup', 'width=600,height=700');
-
-      if (!popup) {
-        reject('Popup blocked!');
-        return;
-      }
-
-      // Listen for messages from the popup
-      const listener = (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) {
-          return; // Ignore messages from unknown sources
-        }
-        const { authResponseUrl } = event.data;
-        if (authResponseUrl) {
-          resolve(authResponseUrl);
-          window.removeEventListener('message', listener);
-        } else {
-          console.log('OAuth failed', event);
-        }
-      };
-
-      window.addEventListener('message', listener);
-    });
-  }
-
   toggleSidePanel() {
     if (this.showSidePanel) {
       this.sideDrawer.close();
@@ -1131,46 +582,17 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showSidePanel = !this.showSidePanel;
   }
 
-  protected handleTabChange(event: any) {
-    if (!this.isChatMode()) {
-      this.resetEditEvalCaseVars();
-      this.handleReturnToSession(true);
-    }
-  }
-
-  protected handleShouldShowEvalTab(shouldShow: boolean) {
-    this.shouldShowEvalTab.set(shouldShow);
-  }
-
-  protected handleReturnToSession(event: boolean) {
-    this.sessionTab.getSession(this.sessionId);
-    this.evalTab.resetEvalCase();
-    this.isChatMode.set(true);
-  }
-
-  protected handleEvalNotInstalled(errorMsg: string) {
-    if (errorMsg) {
-      this.openSnackBar(errorMsg, 'OK');
-    }
-  }
-
   private resetEventsAndMessages() {
-    this.eventData.clear();
-    this.eventMessageIndexArray = [];
     this.messages = [];
     this.messagesSubject.next(this.messages);
-    this.artifacts = [];
   }
 
   protected updateWithSelectedSession(session: Session) {
     if (!session || !session.id || !session.events || !session.state) {
       return;
     }
-    this.traceService.resetTraceService();
     this.sessionId = session.id;
     this.currentSessionState = session.state;
-    this.evalCase = null;
-    this.isChatMode.set(true);
 
     this.isSessionUrlEnabledObs.subscribe((enabled) => {
       if (enabled) {
@@ -1183,217 +605,16 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     session.events.forEach((event: any) => {
       event.content?.parts?.forEach((part: any) => {
-        this.storeMessage(
-          part,
-          event,
-          index,
-          event.author === 'user' ? 'user' : 'bot'
-        );
-        index += 1;
-        if (event.author && event.author !== 'user') {
-          this.storeEvents(part, event, index);
-        }
-      });
-    });
-
-    this.eventService.getTrace(this.sessionId).subscribe((res) => {
-      this.traceData = res;
-      this.traceService.setEventData(this.eventData);
-      this.traceService.setMessages(this.messages);
-    });
-
-    this.bottomPanelVisible = false;
-  }
-
-  protected updateWithSelectedEvalCase(evalCase: EvalCase) {
-    this.evalCase = evalCase;
-    this.isChatMode.set(false);
-
-    this.resetEventsAndMessages();
-    let index = 0;
-    let invocationIndex = 0;
-
-    for (const invocation of evalCase.conversation) {
-      if (invocation.userContent?.parts) {
-        for (const part of invocation.userContent.parts) {
-          this.storeMessage(part, null, index, 'user');
-          index++;
-        }
-      }
-
-      if (invocation.intermediateData?.toolUses) {
-        let toolUseIndex = 0;
-        for (const toolUse of invocation.intermediateData.toolUses) {
-          const functionCallPart = {
-            functionCall: { name: toolUse.name, args: toolUse.args },
-          };
+        if (part.text || part.inlineData) {
           this.storeMessage(
-            functionCallPart,
-            null,
+            part,
+            event,
             index,
-            'bot',
-            invocationIndex,
-            { toolUseIndex }
+            event.author === 'user' ? 'user' : 'bot'
           );
-          index++;
-          toolUseIndex++;
-
-          const functionResponsePart = {
-            functionResponse: { name: toolUse.name },
-          };
-          this.storeMessage(functionResponsePart, null, index, 'bot');
-          index++;
+          index += 1;
         }
-      }
-
-      if (invocation.finalResponse?.parts) {
-        let finalResponsePartIndex = 0;
-        for (const part of invocation.finalResponse.parts) {
-          this.storeMessage(part, null, index, 'bot', invocationIndex, {
-            finalResponsePartIndex,
-          });
-          index++;
-          finalResponsePartIndex++;
-        }
-      }
-      invocationIndex++;
-    }
-  }
-
-  protected updateSelectedEvalSetId(evalSetId: string) {
-    this.evalSetId = evalSetId;
-  }
-
-  protected editEvalCaseMessage(message: any) {
-    this.isEvalCaseEditing.set(true);
-    this.userEditEvalCaseMessage = message.text;
-    message.isEditing = true;
-    setTimeout(() => {
-      this.textarea?.nativeElement.focus();
-      let textLength = this.textarea?.nativeElement.value.length;
-      if (message.text.charAt(textLength - 1) === '\n') {
-        textLength--;
-      }
-      this.textarea?.nativeElement.setSelectionRange(textLength, textLength);
-    }, 0);
-  }
-
-  protected editFunctionArgs(message: any) {
-    this.isEvalCaseEditing.set(true);
-    const dialogRef = this.dialog.open(EditFunctionArgsDialogComponent, {
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      data: {
-        functionName: message.functionCall.name,
-        args: message.functionCall.args,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.isEvalCaseEditing.set(false);
-      if (result) {
-        this.hasEvalCaseChanged.set(true);
-        message.functionCall.args = result;
-
-        this.updatedEvalCase = structuredClone(this.evalCase!);
-        this.updatedEvalCase!.conversation[
-          message.invocationIndex
-        ].intermediateData!.toolUses![message.toolUseIndex].args = result;
-      }
-    });
-  }
-
-  protected saveEvalCase() {
-    this.evalService
-      .updateEvalCase(
-        this.appName,
-        this.evalSetId,
-        this.updatedEvalCase!.evalId,
-        this.updatedEvalCase!
-      )
-      .subscribe((res) => {
-        this.openSnackBar('Eval case updated', 'OK');
-        this.resetEditEvalCaseVars();
       });
-  }
-
-  protected cancelEditEvalCase() {
-    this.resetEditEvalCaseVars();
-    this.updateWithSelectedEvalCase(this.evalCase!);
-  }
-
-  private resetEditEvalCaseVars() {
-    this.hasEvalCaseChanged.set(false);
-    this.isEvalCaseEditing.set(false);
-    this.isEvalEditMode.set(false);
-    this.updatedEvalCase = null;
-  }
-
-  protected cancelEditMessage(message: any) {
-    message.isEditing = false;
-    this.isEvalCaseEditing.set(false);
-  }
-
-  protected saveEditMessage(message: any) {
-    this.hasEvalCaseChanged.set(true);
-    this.isEvalCaseEditing.set(false);
-    message.isEditing = false;
-    message.text = this.userEditEvalCaseMessage
-      ? this.userEditEvalCaseMessage
-      : ' ';
-
-    this.updatedEvalCase = structuredClone(this.evalCase!);
-    this.updatedEvalCase!.conversation[
-      message.invocationIndex
-    ].finalResponse!.parts![message.finalResponsePartIndex] = {
-      text: this.userEditEvalCaseMessage,
-    };
-
-    this.userEditEvalCaseMessage = '';
-  }
-
-  protected handleKeydown(event: KeyboardEvent, message: any) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.saveEditMessage(message);
-    } else if (event.key === 'Escape') {
-      this.cancelEditMessage(message);
-    }
-  }
-
-  protected deleteEvalCaseMessage(message: any, index: number) {
-    this.hasEvalCaseChanged.set(true);
-    this.messages.splice(index, 1);
-    this.messagesSubject.next(this.messages);
-
-    this.updatedEvalCase = structuredClone(this.evalCase!);
-    this.updatedEvalCase!.conversation[
-      message.invocationIndex
-    ].finalResponse!.parts!.splice(message.finalResponsePartIndex, 1);
-  }
-
-  protected editEvalCase() {
-    this.isEvalEditMode.set(true);
-  }
-
-  protected deleteEvalCase() {
-    const dialogData: DeleteSessionDialogData = {
-      title: 'Confirm delete',
-      message: `Are you sure you want to delete ${this.evalCase!.evalId}?`,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
-    };
-
-    const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
-      width: '600px',
-      data: dialogData,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.evalTab.deleteEvalCase(this.evalCase!.evalId);
-        this.openSnackBar('Eval case deleted', 'OK');
-      }
     });
   }
 
@@ -1403,17 +624,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onNewSessionClick() {
     this.createSession();
-    this.eventData.clear();
-    this.eventMessageIndexArray = [];
     this.messages = [];
-    this.artifacts = [];
-    this.traceData = [];
-    this.bottomPanelVisible = false;
-
-    // Close eval history if opened
-    if (!!this.evalTab.showEvalHistory) {
-      this.evalTab.toggleEvalHistoryButton();
-    }
   }
 
   onFileSelect(event: Event) {
@@ -1437,38 +648,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.useSse = !this.useSse;
   }
 
-  selectEvent(key: string) {
-    this.selectedEvent = this.eventData.get(key);
-    this.selectedEventIndex = this.getIndexOfKeyInMap(key);
-    this.eventService.getEventTrace(this.selectedEvent.id).subscribe((res) => {
-      this.llmRequest = JSON.parse(res[this.llmRequestKey]);
-      this.llmResponse = JSON.parse(res[this.llmResponseKey]);
-    });
-    this.eventService
-      .getEvent(
-        this.userId,
-        this.appName,
-        this.sessionId,
-        this.selectedEvent.id
-      )
-      .subscribe(async (res) => {
-        if (!res.dotSrc) {
-          this.renderedEventGraph = undefined;
-          return;
-        }
-        const graphSrc = res.dotSrc;
-        const viz = await instance();
-        const svg = viz.renderString(graphSrc, {
-          format: 'svg',
-          engine: 'dot',
-        });
-        this.rawSvgString = svg;
-        this.renderedEventGraph = this.sanitizer.bypassSecurityTrustHtml(svg);
-      });
-  }
-
   protected deleteSession(session: string) {
-    const dialogData: DeleteSessionDialogData = {
+    const dialogData = {
       title: 'Confirm delete',
       message: `Are you sure you want to delete this session ${this.sessionId}?`,
       confirmButtonText: 'Delete',
@@ -1492,7 +673,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
               window.location.reload();
             }
           });
-      } else {
       }
     });
   }
@@ -1522,7 +702,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((app: string) => {
         this.selectApp(app);
 
-        // Navigate if selected app changed.
         const selectedAgent = this.activatedRoute.snapshot.queryParams['app'];
         if (app === selectedAgent) {
           return;
@@ -1544,50 +723,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.location.replaceState(url);
   }
 
-  handlePageEvent(event: any) {
-    if (event.pageIndex >= 0) {
-      const key = this.getKeyAtIndexInMap(event.pageIndex);
-      if (key) {
-        this.selectEvent(key);
-      }
-    }
-  }
-
-  closeSelectedEvent() {
-    this.selectedEvent = undefined;
-    this.selectedEventIndex = undefined;
-  }
-
-  private getIndexOfKeyInMap(key: string): number | undefined {
-    let index = 0;
-    const mapOrderPreservingSort = (a: any, b: any): number => 0; // Simple compare function
-
-    const sortedKeys = Array.from(this.eventData.keys()).sort(
-      mapOrderPreservingSort
-    );
-
-    for (const k of sortedKeys) {
-      if (k === key) {
-        return index;
-      }
-      index++;
-    }
-    return undefined; // Key not found
-  }
-
-  private getKeyAtIndexInMap(index: number): string | undefined {
-    const mapOrderPreservingSort = (a: any, b: any): number => 0; // Simple compare function
-
-    const sortedKeys = Array.from(this.eventData.keys()).sort(
-      mapOrderPreservingSort
-    );
-
-    if (index >= 0 && index < sortedKeys.length) {
-      return sortedKeys[index];
-    }
-    return undefined; // Index out of bounds
-  }
-
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action);
   }
@@ -1596,120 +731,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     return text.replace('/*PLANNING*/', '').replace('/*ACTION*/', '');
   }
 
-  openLink(url: string) {
-    window.open(url, '_blank');
-  }
-
-  renderGooglerSearch(content: string) {
-    return this.sanitizer.bypassSecurityTrustHtml(content);
-  }
-
   openViewImageDialog(imageData: string | null) {
-    const dialogRef = this.dialog.open(ViewImageDialogComponent, {
+    this.dialog.open(ViewImageDialogComponent, {
       maxWidth: '90vw',
       maxHeight: '90vh',
       data: {
         imageData,
       },
     });
-  }
-
-  private createDefaultArtifactName(mimeType: string): string {
-    if (!mimeType || !mimeType.includes('/')) {
-      return '';
-    }
-
-    return mimeType.replace('/', '.');
-  }
-
-  protected exportSession() {
-    this.sessionService
-      .getSession(this.userId, this.appName, this.sessionId)
-      .subscribe((res) => {
-        console.log(res);
-        this.downloadService.downloadObjectAsJson(
-          res,
-          `session-${this.sessionId}.json`
-        );
-      });
-  }
-
-  closeTraceEventDetailPanel() {
-    this.bottomPanelVisible = false;
-    this.traceService.selectedRow(undefined);
-    this.traceService.setHoveredMessages(undefined, '');
-  }
-
-  shouldMessageHighlighted(index: number) {
-    return this.hoveredEventMessageIndices.includes(index);
-  }
-
-  protected importSession() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'application/json';
-
-    input.onchange = () => {
-      if (!input.files || input.files.length === 0) {
-        return;
-      }
-
-      const file = input.files[0];
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          try {
-            const sessionData = JSON.parse(e.target.result as string);
-            if (
-              !sessionData.userId ||
-              !sessionData.appName ||
-              !sessionData.events
-            ) {
-              this.openSnackBar('Invalid session file format', 'OK');
-              return;
-            }
-            this.sessionService
-              .importSession(
-                sessionData.userId,
-                sessionData.appName,
-                sessionData.events
-              )
-              .subscribe((res) => {
-                this.openSnackBar('Session imported', 'OK');
-                this.sessionTab.refreshSession();
-              });
-          } catch (error) {
-            this.openSnackBar('Error parsing session file', 'OK');
-          }
-        }
-      };
-
-      reader.readAsText(file);
-    };
-
-    input.click();
-  }
-
-  // Helper method to dynamically inject the style
-  private injectCustomIconColorStyle(className: string, color: string): void {
-    // Check if the style already exists to prevent duplicates
-    if (this.document.getElementById(className)) {
-      return;
-    }
-
-    const style = this.renderer.createElement('style');
-    this.renderer.setAttribute(style, 'id', className); // Set an ID to check for existence later
-    this.renderer.setAttribute(style, 'type', 'text/css');
-
-    // Define the CSS
-    const css = `
-      .${className} {
-        background-color: ${color} !important;
-      }
-    `;
-
-    this.renderer.appendChild(style, this.renderer.createText(css));
-    this.renderer.appendChild(this.document.head, style); // Append to the head of the document
   }
 }
