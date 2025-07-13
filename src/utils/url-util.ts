@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { env } from '../env/env';
+import { environment } from '../environments/environment';
 
 export class URLUtil {
   /**
@@ -37,7 +37,7 @@ export class URLUtil {
    * @returns {string} Base URL (protocol + hostname + port)
    */
   static getApiServerBaseUrl(): string {
-    return (window as any)['runtimeConfig']?.backendUrl;
+    return environment.backendUrl;
   }
 
   static getWSServerUrl(): string {
