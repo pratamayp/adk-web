@@ -19,7 +19,7 @@
 @use '../theme-colors.scss' as theme;
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   @include mat.theme((color: theme.$primary-palette,
       density: 0));
 }
@@ -59,4 +59,16 @@ markdown p {
 :root {
   @include mat.progress-spinner-overrides((active-indicator-color: #a8c7fa,
       size: 80));
+}
+
+:root {
+  @include mat.tooltip-overrides((container-color: #2b2b2f,
+      supporting-text-color: white,
+      supporting-text-size: 12px));
+}
+
+:root {
+  @include mat.progress-bar-overrides((active-indicator-color: orange,
+      track-color: red,
+    ));
 }

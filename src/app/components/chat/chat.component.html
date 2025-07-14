@@ -14,8 +14,9 @@
     "
     matTooltip="Open panel"
     (click)="toggleSidePanel()"
-    >left_panel_open</span
   >
+    left_panel_open
+  </span>
   }
   <mat-drawer class="side-drawer" #sideDrawer mode="side" appResizableDrawer>
     <div style="margin-top: 20px; margin-left: 20px; display: flex">
@@ -30,17 +31,14 @@
             style="color: #c4c7c5; cursor: pointer; margin-right: 15px"
             matTooltip="Collapse panel"
             (click)="toggleSidePanel()"
-            >left_panel_close</span
           >
+            left_panel_close
+          </span>
         </div>
       </div>
     </div>
     @if (appName != "" && showSidePanel) {
-    <div class="tabs-container">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad a doloremque
-      et deleniti delectus ullam ea minus error, nobis velit iusto qui magni
-      laudantium sunt modi beatae hic quos nostrum.
-    </div>
+    <div class="tabs-container">Sidebar here</div>
     }
     <div class="resize-handler"></div>
   </mat-drawer>
@@ -61,15 +59,16 @@
         "
         matTooltip="Open panel"
         (click)="toggleSidePanel()"
-        >left_panel_open</span
       >
+        left_panel_open
+      </span>
       }
       <div style="display: flex">
-        <div class="toolbar-session-text">Session ID</div>
-        <div class="toolbar-session-id">{{ sessionId }}</div>
+        <!-- <div class="toolbar-session-text">Session ID</div> -->
+        <!-- <div class="toolbar-session-id">{{ sessionId }}</div> -->
       </div>
       <div class="toolbar-actions">
-        <div class="toolbar-sse-toggle">
+        <!-- <div class="toolbar-sse-toggle">
           <mat-slide-toggle
             class="example-margin"
             [checked]="useSse"
@@ -77,11 +76,11 @@
           >
             Token Streaming
           </mat-slide-toggle>
-        </div>
-        <mat-divider
+        </div> -->
+        <!-- <mat-divider
           [vertical]="true"
           style="margin-left: 8px; margin-right: 8px; height: 22px"
-        ></mat-divider>
+        ></mat-divider> -->
         <div style="display: flex; align-items: center">
           <div (click)="onNewSessionClick()" class="toolbar-new-sesison">
             <mat-icon>add</mat-icon>
@@ -99,10 +98,10 @@
       } @else {
       <div class="empty-state-container">
         @if (((apps$ | async) || []).length > 0) {
-        <span
-          >Welcome to ADK!<br />
-          Select an agent on the left to begin with.</span
-        >
+        <span>
+          Welcome to ADK!<br />
+          Select an agent on the left to begin with.
+        </span>
         } @else {
         <div>
           Failed to load agents. To get started, run
@@ -118,96 +117,98 @@
       </div>
       } } @else {
       <div #autoScroll class="chat-messages">
-        <div #videoContainer></div>
-        @for (message of messages; track message; let i = $index) {
-        <div
-          [ngClass]="{
-            'user-message': message.role === 'user',
-            'bot-message': message.role === 'bot'
-          }"
-        >
-          @if (message.role === "bot") {
-          <button mat-mini-fab>
-            <mat-icon fontSet="material-symbols-outlined">robot_2</mat-icon>
-          </button>
-          }
-          <mat-card class="message-card">
-            @if (message.isLoading) {
-            <mat-progress-bar
-              class="loading-bar"
-              mode="buffer"
-            ></mat-progress-bar>
-            } @if (message.attachments) {
-            <div class="attachments">
-              @for (file of message.attachments; track file) {
-              <div class="attachment">
-                @if (file.file.type.startsWith("image/")) {
-                <img
-                  [src]="file.url"
-                  alt="attachment"
-                  class="image-preview-chat"
-                />
-                } @if (!file.file.type.startsWith("image/")) {
-                <mat-icon>insert_drive_file</mat-icon>
-                <a [href]="file.url" download>{{ file.file.name }}</a>
+        <div class="inner-wrapper">
+          <div #videoContainer></div>
+          @for (message of messages; track message; let i = $index) {
+          <div
+            [ngClass]="{
+              'user-message': message.role === 'user',
+              'bot-message': message.role === 'bot'
+            }"
+          >
+            @if (message.role === "bot") { @if(message.isLoading) {
+            <span class="bot-loader"></span>
+            } @else {
+            <div>
+              <mat-icon fontSet="material-symbols-outlined">robot_2</mat-icon>
+            </div>
+            } }
+
+            <mat-card class="message-card">
+              @if (message.isLoading) {
+              <span>Thinking...</span>
+              } @if (message.attachments) {
+              <div class="attachments">
+                @for (file of message.attachments; track file) {
+                <div class="attachment">
+                  @if (file.file.type.startsWith("image/")) {
+                  <img
+                    [src]="file.url"
+                    alt="attachment"
+                    class="image-preview-chat"
+                  />
+                  } @if (!file.file.type.startsWith("image/")) {
+                  <mat-icon>insert_drive_file</mat-icon>
+                  <a [href]="file.url" download>{{ file.file.name }}</a>
+                  }
+                </div>
                 }
               </div>
               }
-            </div>
-            }
-            <div>
-              @if (message.text) {
-              <markdown
-                class="message-text"
-                [data]="message.text"
-                [ngStyle]="{
-                  'font-style': message.thought ? 'italic' : 'normal',
-                  color: message.thought ? '#9aa0a6' : 'white'
-                }"
-              ></markdown>
-              }
-            </div>
-            @if (message.inlineData) { @if
-            (getMediaTypeFromMimetype(message.inlineData.mimeType) ===
-            MediaType.IMAGE) {
-            <div class="generated-image-container">
-              <img
-                class="generated-image"
-                alt="image"
-                [src]="message.inlineData.data"
-                (click)="openViewImageDialog(message.inlineData.data)"
-              />
-            </div>
-            } @else if (getMediaTypeFromMimetype(message.inlineData.mimeType)
-            === MediaType.AUDIO) {
-            <div>
-              <app-audio-player
-                [base64data]="message.inlineData.data"
-              ></app-audio-player>
-            </div>
-            } @else {
-            <div>
-              <button
-                class="link-style-button"
-                (click)="
-                  openBase64InNewTab(
-                    message.inlineData.data,
-                    message.inlineData.mimeType
-                  )
-                "
-              >
-                {{ message.inlineData.displayName || 'Download File' }}
-              </button>
-            </div>
-            } }
-          </mat-card>
-          @if (message.role === "user") {
-          <button mat-mini-fab>
-            <mat-icon>person</mat-icon>
-          </button>
+              <div>
+                @if (message.text) {
+                <markdown
+                  class="message-text"
+                  [data]="message.text"
+                  [ngStyle]="{
+                    'font-style': message.thought ? 'italic' : 'normal',
+                    color: message.thought ? '#9aa0a6' : '#2b3136'
+                  }"
+                ></markdown>
+                }
+              </div>
+              @if (message.inlineData) { @if
+              (getMediaTypeFromMimetype(message.inlineData.mimeType) ===
+              MediaType.IMAGE) {
+              <div class="generated-image-container">
+                <img
+                  class="generated-image"
+                  alt="image"
+                  [src]="message.inlineData.data"
+                  (click)="openViewImageDialog(message.inlineData.data)"
+                />
+              </div>
+              } @else if (getMediaTypeFromMimetype(message.inlineData.mimeType)
+              === MediaType.AUDIO) {
+              <div>
+                <app-audio-player
+                  [base64data]="message.inlineData.data"
+                ></app-audio-player>
+              </div>
+              } @else {
+              <div>
+                <button
+                  class="link-style-button"
+                  (click)="
+                    openBase64InNewTab(
+                      message.inlineData.data,
+                      message.inlineData.mimeType
+                    )
+                  "
+                >
+                  {{ message.inlineData.displayName || 'Download File' }}
+                </button>
+              </div>
+              } }
+            </mat-card>
+            <!-- @if (message.role === "user") {
+            <button mat-mini-fab>
+              <mat-icon>person</mat-icon>
+            </button>
+            } -->
+          </div>
           }
         </div>
-        }
       </div>
       }
       <div class="chat-input">
@@ -261,19 +262,27 @@
             cdkAutosizeMaxRows="10"
             [(ngModel)]="userInput"
             (keydown.enter)="sendMessage($event)"
-            placeholder="Type a Message..."
-            style="caret-color: white"
+            placeholder="Ask your assistant"
           ></textarea>
           <div class="chat-input-actions">
+            <button
+              mat-button
+              (click)="fileInput.click()"
+              class="attach-file-button"
+              matTooltip="Upload local file"
+            >
+              <mat-icon>attach_file</mat-icon>
+              Attach file
+            </button>
             <button
               mat-icon-button
               (click)="fileInput.click()"
               class="function-event-button"
-              matTooltip="Upload local file"
+              matTooltip="Submit"
             >
-              <mat-icon>attach_file</mat-icon>
+              <mat-icon>send</mat-icon>
             </button>
-            <div>
+            <!-- <div>
               <button
                 mat-icon-button
                 matSuffix
@@ -304,7 +313,7 @@
               >
                 <mat-icon>videocam</mat-icon>
               </button>
-            </div>
+            </div> -->
           </div>
         </mat-form-field>
       </div>
