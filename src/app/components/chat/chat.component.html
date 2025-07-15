@@ -47,7 +47,7 @@
     <!-- when the 'tabs-container' class is renamed, it wont work -->
     <div class="tabs-container">
       <div class="new-chat">
-        <div class="chat-item with-icon">
+        <div class="chat-item with-icon" (click)="onNewSessionClick()">
           <mat-icon>create</mat-icon>
           New Chat
         </div>
@@ -107,8 +107,8 @@
         ></mat-divider> -->
         <div style="display: flex; align-items: center">
           <div (click)="onNewSessionClick()" class="toolbar-new-sesison">
-            <mat-icon>add</mat-icon>
-            New Session
+            <span>Username</span>
+            <mat-icon>person</mat-icon>
           </div>
         </div>
       </div>
