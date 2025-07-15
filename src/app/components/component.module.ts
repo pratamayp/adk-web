@@ -46,6 +46,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { MarkdownModule } from 'ngx-markdown';
@@ -133,6 +134,7 @@ const COMPONENTS = [
     MatChipsModule,
     MatDialogModule,
     MatButtonToggleModule,
+    // MatMenuModule,
   ],
 })
 export class ComponentModule {}

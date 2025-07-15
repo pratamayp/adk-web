@@ -44,8 +44,24 @@
       </div>
     </div>
     @if (appName != "" && showSidePanel) {
+    <!-- when the 'tabs-container' class is renamed, it wont work -->
     <div class="tabs-container">
-      <div class="chat-item">Chat Session A</div>
+      <div class="new-chat">
+        <div class="chat-item with-icon">
+          <mat-icon>create</mat-icon>
+          New Chat
+        </div>
+      </div>
+
+      <div class="recent-chats-wrapper">
+        <h2>Recent chats</h2>
+        <div class="chat-item">
+          <span class="chat-label">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur,
+            voluptatum!
+          </span>
+        </div>
+      </div>
     </div>
     }
     <div class="resize-handler"></div>

@@ -340,13 +340,58 @@
   }
 
   .tabs-container {
-    margin-top: 20px;
-    padding: 10px 20px;
+    margin-top: 16px;
 
     .chat-item {
-      background-color: red;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      margin: 4px 0;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #007bff13;
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .chat-label {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: inline-block;
+        flex: 1; // Ini penting agar ellipsis bekerja
+      }
+    }
+
+    .new-chat {
+      padding: 10px 20px 0;
+    }
+
+    .recent-chats-wrapper {
+      height: 68vh;
+      padding: 10px 20px;
+      overflow-y: auto;
+
+      h2 {
+        font-size: 12px;
+        font-weight: 600;
+        padding-left: 14px;
+        color: #a6acb2;
+      }
     }
   }
+
 
   .tab-label {
     font-size: 14px;
