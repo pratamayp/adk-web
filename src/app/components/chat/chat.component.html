@@ -18,7 +18,13 @@
     left_panel_open
   </span>
   }
-  <mat-drawer class="side-drawer" #sideDrawer mode="side" appResizableDrawer>
+  <mat-drawer
+    class="side-drawer"
+    #sideDrawer
+    mode="side"
+    appResizableDrawer
+    [opened]="showSidePanel"
+  >
     <div style="margin-top: 20px; margin-left: 20px; display: flex">
       <div style="width: 100%">
         <div class="drawer-header">
@@ -38,7 +44,9 @@
       </div>
     </div>
     @if (appName != "" && showSidePanel) {
-    <div class="tabs-container">Sidebar here</div>
+    <div class="tabs-container">
+      <div class="chat-item">Chat Session A</div>
+    </div>
     }
     <div class="resize-handler"></div>
   </mat-drawer>

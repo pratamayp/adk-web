@@ -226,7 +226,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.showSidePanel = true;
-    this.sideDrawer.open();
+    this.changeDetectorRef.detectChanges();
   }
 
   scrollToBottom() {
@@ -574,11 +574,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleSidePanel() {
-    if (this.showSidePanel) {
-      this.sideDrawer.close();
-    } else {
-      this.sideDrawer.open();
-    }
     this.showSidePanel = !this.showSidePanel;
   }
 

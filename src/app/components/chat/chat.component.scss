@@ -340,8 +340,12 @@
   }
 
   .tabs-container {
-    width: 100%;
     margin-top: 20px;
+    padding: 10px 20px;
+
+    .chat-item {
+      background-color: red;
+    }
   }
 
   .tab-label {
